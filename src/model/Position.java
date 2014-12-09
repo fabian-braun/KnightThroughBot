@@ -9,6 +9,8 @@ public class Position implements Serializable {
 	private static final long serialVersionUID = 775450809456043342L;
 	public final int y;
 	public final int x;
+	public static final char[] xIndexRef = new char[] { 'A', 'B', 'C', 'D',
+			'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L' };
 
 	public Position(int y, int x) {
 		this.y = y;
@@ -18,6 +20,10 @@ public class Position implements Serializable {
 	@Override
 	public String toString() {
 		return "[" + y + ";" + x + "]";
+	}
+
+	public String toCoordinateString() {
+		return "[" + (8 - y) + ";" + xIndexRef[x] + "]";
 	}
 
 	@Override

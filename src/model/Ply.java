@@ -29,7 +29,7 @@ public class Ply implements Comparable<Ply> {
 
 	@Override
 	public String toString() {
-		return from + " --> " + to;
+		return from.toCoordinateString() + " --> " + to.toCoordinateString();
 	}
 
 	@Override

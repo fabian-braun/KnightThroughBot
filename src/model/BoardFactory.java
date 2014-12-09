@@ -1,10 +1,5 @@
 package model;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
 import error.GameException;
 
 public class BoardFactory {
@@ -39,40 +34,5 @@ public class BoardFactory {
 			}
 		}
 		return b;
-	}
-
-	public static SavedGame readFromFile(String fullPath) {
-		File f = new File(fullPath);
-		if (!f.exists() && f.canRead()) {
-			throw new GameException("Board could not be read from file "
-					+ fullPath);
-		}
-		FileInputStream fis = null;
-		ObjectInputStream ois = null;
-		try {
-			fis = new FileInputStream(f);
-			ois = new ObjectInputStream(fis);
-			SavedGame b = (SavedGame) ois.readObject();
-			ois.close();
-			fis.close();
-			return b;
-		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		System.out.println("Deserialisation failed. Return standart board");
-		// silently close streams
-		try {
-			if (fis != null)
-				fis.close();
-		} catch (Exception e2) {
-
-		}
-		try {
-			if (ois != null)
-				ois.close();
-		} catch (Exception e2) {
-
-		}
-		return new SavedGame(createStandardBoard(), PlayerType.UP);
 	}
 }
