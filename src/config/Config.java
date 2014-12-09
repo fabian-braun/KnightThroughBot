@@ -28,6 +28,15 @@ public class Config {
 	public static final String valClientTypeAlphabetaFast = "ALPHABETA_FAST";
 	public static final String valClientTypeAlphabeta3 = "ALPHABETA_3";
 	public static final String valClientTypeAlphabeta4 = "ALPHABETA_4";
+	public static final String valClientTypeAlphabeta5 = "ALPHABETA_5";
+
+	public static final String keyEvaluationFunctionPlayerUp = "EVALUATION_PLAYER_UP";
+	public static final String keyEvaluationFunctionPlayerDown = "EVALUATION_PLAYER_DOWN";
+	public static final String valEvaluationFunctionDevelopment = "DEVELOPMENT";
+	public static final String valEvaluationFunctionLeaderPosition = "LEADER_POS";
+	public static final String valEvaluationFunctionPieceCount = "PIECE_COUNT";
+	public static final String valEvaluationFunctionPieceCountAdvanced = "STRUCTURE";
+	public static final String valEvaluationFunctionProtected = "PROTECTION";
 
 	public static final String keyTotalTimePlayerUp = "TOTAL_TIME_PLAYER_UP";
 	public static final String keyTotalTimePlayerDown = "TOTAL_TIME_PLAYER_DOWN";
@@ -36,6 +45,8 @@ public class Config {
 	public static final String keySavedGameFilePath = "INIT_GAME_FROM_FILE";
 
 	public static final String keyShowGui = "SHOW_GUI";
+
+	public static final String keyEstimateTotalTurns = "EXPECTED_NUMBER_OF_TURNS";
 
 	/**
 	 * returns the value for the given key from the property file. If value

@@ -21,8 +21,10 @@ public class TTable {
 	}
 
 	public static long code(int y, int x, PlayerType player) {
-		if (PlayerType.NONE.equals(player))
-			return 0;
+		// this check can be uncommented as this never happens
+		// if (PlayerType.NONE.equals(player))
+		// throw new GameException(
+		// "zobrist hash should not be changed for PlayerType.NONE");
 		int pIndex = PlayerType.DOWN.equals(player) ? 0 : 1;
 		return rNumbers[y][x][pIndex];
 	}

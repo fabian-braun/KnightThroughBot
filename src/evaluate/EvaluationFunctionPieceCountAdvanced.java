@@ -19,7 +19,8 @@ public class EvaluationFunctionPieceCountAdvanced implements EvaluationFunction 
 		int valuePieceCount = board.getCountFor(p)
 				- board.getCountFor(p.getOpponent());
 		valuePieceCount *= 1000;
-		return valuePieceCount + board.getStructureQuality(p);
+		return valuePieceCount + board.getStructureQuality(p)
+				- board.getStructureQuality(p.getOpponent());
 	}
 
 	@Override

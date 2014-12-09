@@ -3,15 +3,17 @@ package client;
 import model.Board;
 import model.PlayerType;
 import model.Ply;
+import config.Config;
 
 public abstract class GameClient {
 
 	protected final Board initialBoard;
 
-	public static final int expectedNumberOfTurns = 14;
-	public static final int openingEnds = 2;
-	public static final int midGameEnds = expectedNumberOfTurns
-			- expectedNumberOfTurns / 3;
+	public static final int EXPECTED_NUMBER_OF_TURNS = (int) Config.readNumber(
+			Config.keyEstimateTotalTurns, 14);
+	public static final int LAST_OPENING_TURN = 2;
+	public static final int LAST_MIDGAME_TURN = EXPECTED_NUMBER_OF_TURNS
+			- EXPECTED_NUMBER_OF_TURNS / 3;
 
 	public GameClient(Board initialBoard) {
 		this.initialBoard = initialBoard;
@@ -20,7 +22,7 @@ public abstract class GameClient {
 	public Ply move(final Board board, final PlayerType forPlayer,
 			long maxDuration, int turnIndex) {
 		long durationForNextPly = getDurationForNextPly(maxDuration, turnIndex);
-		if (openingEnds < turnIndex && turnIndex <= midGameEnds) {
+		if (LAST_OPENING_TURN < turnIndex && turnIndex <= LAST_MIDGAME_TURN) {
 			durationForNextPly = getDurationAlternating(durationForNextPly,
 					turnIndex);
 		}
@@ -30,7 +32,7 @@ public abstract class GameClient {
 	}
 
 	private long getDurationForNextPly(long totalTimeLeft, int turnIndex) {
-		if (turnIndex <= openingEnds) {
+		if (turnIndex <= LAST_OPENING_TURN) {
 			// first turns use few time
 			return (totalTimeLeft / 4) / turnsToWin(turnIndex);
 		}
@@ -48,15 +50,16 @@ public abstract class GameClient {
 
 	private int turnsToWin(int turnIndex) {
 		// first 75% of the game
-		if (turnIndex < expectedNumberOfTurns - (expectedNumberOfTurns / 4)) {
+		if (turnIndex < EXPECTED_NUMBER_OF_TURNS
+				- (EXPECTED_NUMBER_OF_TURNS / 4)) {
 			// assume equal distribution
-			return expectedNumberOfTurns - turnIndex;
-		} else if (turnIndex < expectedNumberOfTurns
-				- (expectedNumberOfTurns / 6)) {
+			return EXPECTED_NUMBER_OF_TURNS - turnIndex;
+		} else if (turnIndex < EXPECTED_NUMBER_OF_TURNS
+				- (EXPECTED_NUMBER_OF_TURNS / 6)) {
 			// 75% to 83%
-			return expectedNumberOfTurns / 4;
+			return EXPECTED_NUMBER_OF_TURNS / 4;
 		}
-		return expectedNumberOfTurns / 6;
+		return EXPECTED_NUMBER_OF_TURNS / 6;
 	}
 
 	// duration = millisec

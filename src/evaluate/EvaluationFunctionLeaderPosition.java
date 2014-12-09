@@ -18,7 +18,8 @@ public class EvaluationFunctionLeaderPosition implements EvaluationFunction {
 		int valuePieceCount = board.getCountFor(p)
 				- board.getCountFor(p.getOpponent());
 		valuePieceCount *= 1000;
-		return valuePieceCount - board.getLeaderY(p);
+		return valuePieceCount - board.getLeaderY(p)
+				+ board.getLeaderY(p.getOpponent());
 	}
 
 	@Override

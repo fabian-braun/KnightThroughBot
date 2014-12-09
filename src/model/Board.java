@@ -110,9 +110,11 @@ public class Board implements Serializable {
 	}
 
 	public void set(int y, int x, PlayerType type) {
-		zobristHash = zobristHash ^ TTable.code(y, x, board[y][x]);
+		if (!PlayerType.NONE.equals(board[y][x]))
+			zobristHash = zobristHash ^ TTable.code(y, x, board[y][x]);
 		board[y][x] = type;
-		zobristHash = zobristHash ^ TTable.code(y, x, type);
+		if (!type.equals(PlayerType.NONE))
+			zobristHash = zobristHash ^ TTable.code(y, x, type);
 	}
 
 	public List<Ply> getPossiblePlies(PlayerType forPlayer) {

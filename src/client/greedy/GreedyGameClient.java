@@ -4,17 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import client.GameClient;
 import model.Board;
 import model.PlayerType;
 import model.Ply;
 import model.RatedBoardPieceCount;
+import client.GameClient;
+import config.Config;
 import evaluate.EvaluationFunction;
-import evaluate.EvaluationFunctionPieceCount;
+import evaluate.EvaluationFunctionFactory;
 
 public class GreedyGameClient extends GameClient {
 
-	private EvaluationFunction evaluator = new EvaluationFunctionPieceCount();
+	private EvaluationFunction evaluator = EvaluationFunctionFactory
+			.mapStringToEval(Config.getStringValue(
+					Config.keyEvaluationFunctionPlayerDown,
+					Config.valEvaluationFunctionDevelopment));
 	private Random randall = new Random();
 
 	public GreedyGameClient(Board initialBoard) {
