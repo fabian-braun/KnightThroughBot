@@ -17,7 +17,7 @@ import model.PlayerType;
 import model.Ply;
 import transpositiontable.Entry;
 import transpositiontable.EntryType;
-import control.GameClient;
+import client.GameClient;
 import evaluate.EvaluationFunction;
 import evaluate.EvaluationFunctionDevelopment;
 
@@ -112,7 +112,7 @@ public class AlphaBetaClient3 extends GameClient {
 	private int alphabetaRec(Board b, int depth, int alpha, int beta,
 			PlayerType p) {
 		if (Thread.currentThread().isInterrupted()) {
-			return -EvaluationFunction.infty;
+			return EvaluationFunction.infty + 15;
 		}
 		int alphaOrig = alpha;
 		Entry saved = tTable.get(b.getZobrist());

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import client.GameClient;
 import model.Board;
 import model.PlayerType;
 import model.Ply;
 import model.RatedBoardPieceCount;
-import control.GameClient;
 import evaluate.EvaluationFunction;
 import evaluate.EvaluationFunctionPieceCount;
 

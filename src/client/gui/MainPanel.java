@@ -146,7 +146,7 @@ public class MainPanel extends JPanel {
 		for (int y = 0; y < ySize; y++) {
 			for (int x = 0; x < xSize; x++) {
 				if (x == 0) {
-					boardPanel.add(new JLabel("" + y));
+					boardPanel.add(new JLabel("" + (ySize - y)));
 				}
 				boardPanel.add(tiles[y][x]);
 			}

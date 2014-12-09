@@ -1,4 +1,4 @@
-package control;
+package client;
 
 import model.Board;
 import client.alphabeta.standard.AlphaBetaClient;

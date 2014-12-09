@@ -1,9 +1,9 @@
 package client.gui;
 
+import client.GameClient;
 import model.Board;
 import model.PlayerType;
 import model.Ply;
-import control.GameClient;
 
 public class MockClient extends GameClient {
 

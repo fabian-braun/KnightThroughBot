@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 import model.Board;
 import model.PlayerType;
 import model.Ply;
-import control.GameClient;
+import client.GameClient;
 import evaluate.EvaluationFunction;
 import evaluate.EvaluationFunctionDevelopment;
 
@@ -103,7 +103,7 @@ public class AlphaBetaClientFast extends GameClient {
 
 	private int alphabeta(Board b, int depth, int alpha, int beta, PlayerType p) {
 		if (Thread.currentThread().isInterrupted()) {
-			return -EvaluationFunction.infty;
+			return EvaluationFunction.infty + 15;
 		}
 		if (!PlayerType.NONE.equals(b.whosTheWinner()) || depth <= 0) {
 			nodeCount++;

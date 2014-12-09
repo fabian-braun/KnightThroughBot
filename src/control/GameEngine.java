@@ -1,9 +1,7 @@
 package control;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +13,8 @@ import model.PlayerType;
 import model.Ply;
 import model.RestrictiveBoard;
 import model.SavedGame;
+import client.GameClient;
+import client.GameClientFactory;
 import config.Config;
 import error.GameException;
 
@@ -26,7 +26,7 @@ public class GameEngine {
 	private Map<PlayerType, Long> totalTime = new HashMap<PlayerType, Long>();
 	private Map<PlayerType, Long> tempTime = new HashMap<PlayerType, Long>();
 	private Map<PlayerType, Long> countPlies = new HashMap<PlayerType, Long>();
-	private int turnIndex = 0;
+	private int turnIndex;
 	PlayerType startingPlayer = PlayerType.UP;
 	private boolean saveGameBetweenTurns = false;
 	private boolean showGui = false;
@@ -35,30 +35,45 @@ public class GameEngine {
 		String savedGameFilePath = Config.getStringValue(
 				Config.keySavedGameFilePath, "");
 		if (savedGameFilePath.isEmpty()) {
-			initialBoard = BoardFactory.createStandardBoard();
-			// set to opponent because player is swapped at beginning of loop
-			startingPlayer = getStartingPlayer().getOpponent();
-			totalTime.put(PlayerType.DOWN, 60 * 1000 * Config.readNumber(
-					Config.keyTotalTimePlayerDown, 15));
-			totalTime.put(PlayerType.UP, 60 * 1000 * Config.readNumber(
-					Config.keyTotalTimePlayerUp, 15));
+			initNewGame();
 		} else {
-			SavedGame saved = BoardFactory.readFromFile(savedGameFilePath);
-			initialBoard = saved.getBoard();
-			// set to opponent because player is swapped at beginning of loop
-			startingPlayer = saved.getPlayerToMove().getOpponent();
-			totalTime.put(PlayerType.DOWN, saved.getRemainingTimeDown());
-			totalTime.put(PlayerType.UP, saved.getRemainingTimeUp());
+			initSavedGame(savedGameFilePath);
 		}
 		tempTime.put(PlayerType.DOWN, 0l);
 		tempTime.put(PlayerType.UP, 0l);
-		usedTime.put(PlayerType.DOWN, 0l);
-		usedTime.put(PlayerType.UP, 0l);
 		countPlies.put(PlayerType.DOWN, 0l);
 		countPlies.put(PlayerType.UP, 0l);
 		saveGameBetweenTurns = Config
 				.getBooleanValue(Config.keySaveGame, false);
 		showGui = Config.getBooleanValue(Config.keyShowGui, true);
+	}
+
+	private void initNewGame() {
+		initialBoard = BoardFactory.createStandardBoard();
+		startingPlayer = getStartingPlayer();
+		totalTime.put(PlayerType.DOWN, 60 * 1000 * Config.readNumber(
+				Config.keyTotalTimePlayerDown, 15));
+		totalTime.put(PlayerType.UP,
+				60 * 1000 * Config.readNumber(Config.keyTotalTimePlayerUp, 15));
+		usedTime.put(PlayerType.DOWN, 0l);
+		usedTime.put(PlayerType.UP, 0l);
+		turnIndex = 0;
+	}
+
+	private void initSavedGame(String savedGameFilePath) {
+		try {
+			SavedGame saved = SavedGame.load(savedGameFilePath);
+			initialBoard = saved.getBoard();
+			startingPlayer = saved.getPlayerToMove();
+			totalTime.put(PlayerType.DOWN, saved.getTotalTimeDown());
+			totalTime.put(PlayerType.UP, saved.getTotalTimeUp());
+			usedTime.put(PlayerType.DOWN, saved.getUsedTimeDown());
+			usedTime.put(PlayerType.UP, saved.getUsedTimeDown());
+			turnIndex = saved.getTurnIndex();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			initNewGame();
+		}
 	}
 
 	public void doGame() {
@@ -72,7 +87,8 @@ public class GameEngine {
 		GameClient playerUp = clients[2];
 		System.out.println("Player Up Client: "
 				+ playerUp.getClientDescription());
-		PlayerType playerToMove = startingPlayer;
+		// set to opponent because player is swapped at beginning of loop
+		PlayerType playerToMove = startingPlayer.getOpponent();
 		GameClient clientToMove;
 		Board board = initialBoard;
 		while (!gameover) {
@@ -82,31 +98,29 @@ public class GameEngine {
 			} else {
 				clientToMove = playerUp;
 			}
-			System.out.println("########## Player " + playerToMove
-					+ " moves on the following board");
+			System.out.println("###### TURN " + turnIndex + " ###### Player "
+					+ playerToMove + " moves on the following board");
 			System.out.println(board);
 
 			startTimeForPlayer(playerToMove);
 			Ply ply = clientToMove.move(new Board(board), playerToMove,
-					totalTime.get(playerToMove) - usedTime.get(playerToMove));
+					totalTime.get(playerToMove) - usedTime.get(playerToMove),
+					turnIndex);
 			stopTimeForPlayer(playerToMove);
-
 			try {
 				board.perform(ply);
-				if (saveGameBetweenTurns)
-					saveGame(board, playerToMove, totalTime.get(playerToMove)
-							- usedTime.get(playerToMove),
-							totalTime.get(playerToMove.getOpponent())
-									- usedTime.get(playerToMove.getOpponent()),
-							turnIndex);
-				if (playerToMove.equals(startingPlayer.getOpponent()))
+				if (playerToMove.equals(startingPlayer.getOpponent())) {
+					// second player has just moved
 					turnIndex++;
+					if (saveGameBetweenTurns)
+						saveGame(board, playerToMove.getOpponent(), turnIndex);
+				}
 				// show Board on GUI
 				gui.move(
 						new RestrictiveBoard(board),
 						PlayerType.NONE,
 						totalTime.get(playerToMove)
-								- usedTime.get(playerToMove));
+								- usedTime.get(playerToMove), turnIndex);
 			} catch (GameException e) {
 				System.out.println("Illegal Ply by Player " + playerToMove);
 				playerDown.announceWinner(playerToMove.getOpponent());
@@ -157,39 +171,20 @@ public class GameEngine {
 		}
 	}
 
-	private void saveGame(Board board, PlayerType playerToMove,
-			long remainingTimeUp, long remainingTimeDown, int turnIndex) {
-		SavedGame save = new SavedGame(board, playerToMove, remainingTimeUp,
-				remainingTimeDown);
+	private void saveGame(Board board, PlayerType playerToMove, int turnIndex) {
 		String filename = "save/frogThrough-";
 		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd-hh-mm-ss");
 		filename += sdf.format(startTime);
-		filename += "-turn-" + turnIndex;
+		filename += "-turn-" + String.format("%02d", turnIndex);
 		filename += ".save";
-		File f = new File(filename);
-		FileOutputStream fos = null;
-		ObjectOutputStream oos = null;
 		try {
-			f.createNewFile();
-			fos = new FileOutputStream(f);
-			oos = new ObjectOutputStream(fos);
-			oos.writeObject(save);
-			oos.close();
-			fos.close();
+			SavedGame
+					.store(new SavedGame(board, playerToMove, usedTime
+							.get(PlayerType.UP), usedTime.get(PlayerType.DOWN),
+							totalTime.get(PlayerType.UP), totalTime
+									.get(PlayerType.DOWN), turnIndex), filename);
 		} catch (IOException e) {
 			e.printStackTrace();
-			// silently close streams
-			if (oos != null)
-				try {
-					oos.close();
-				} catch (Exception e2) {
-				}
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (Exception e2) {
-				}
-			}
 		}
 	}
 }

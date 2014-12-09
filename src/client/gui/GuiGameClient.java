@@ -6,7 +6,7 @@ import model.Board;
 import model.PlayerType;
 import model.Ply;
 import model.RestrictiveBoard;
-import control.GameClient;
+import client.GameClient;
 import error.GameException;
 
 public class GuiGameClient extends GameClient {
@@ -22,7 +22,8 @@ public class GuiGameClient extends GameClient {
 	}
 
 	@Override
-	public Ply move(Board board, PlayerType forPlayer, long maxDuration) {
+	public Ply move(Board board, PlayerType forPlayer, long maxDuration,
+			int turnIndex) {
 		// override to skip time control
 		// gui player may always take as long as he wishes
 		return doMove(board, forPlayer, maxDuration);

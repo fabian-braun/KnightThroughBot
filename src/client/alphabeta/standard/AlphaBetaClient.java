@@ -3,10 +3,10 @@ package client.alphabeta.standard;
 import java.util.List;
 import java.util.Random;
 
+import client.GameClient;
 import model.Board;
 import model.PlayerType;
 import model.Ply;
-import control.GameClient;
 import evaluate.EvaluationFunction;
 import evaluate.EvaluationFunctionPieceCount;
 

@@ -1,4 +1,4 @@
-package control;
+package client;
 
 import model.Board;
 import model.PlayerType;
@@ -8,44 +8,45 @@ public abstract class GameClient {
 
 	protected final Board initialBoard;
 
-	public static final int expectedNumberOfTurns = 20;
-	public static final int openingEnds = expectedNumberOfTurns / 3;
+	public static final int expectedNumberOfTurns = 14;
+	public static final int openingEnds = 2;
 	public static final int midGameEnds = expectedNumberOfTurns
 			- expectedNumberOfTurns / 3;
-	protected int turnIndex = 0;
 
 	public GameClient(Board initialBoard) {
 		this.initialBoard = initialBoard;
 	}
 
 	public Ply move(final Board board, final PlayerType forPlayer,
-			long maxDuration) {
-		long durationForNextPly = getDurationForNextPly(maxDuration);
+			long maxDuration, int turnIndex) {
+		long durationForNextPly = getDurationForNextPly(maxDuration, turnIndex);
 		if (openingEnds < turnIndex && turnIndex <= midGameEnds) {
-			durationForNextPly = getDurationAlternating(durationForNextPly);
+			durationForNextPly = getDurationAlternating(durationForNextPly,
+					turnIndex);
 		}
 		Ply next = doMove(board, forPlayer, durationForNextPly);
 		turnIndex++;
 		return next;
 	}
 
-	private long getDurationForNextPly(long maxDuration) {
+	private long getDurationForNextPly(long totalTimeLeft, int turnIndex) {
 		if (turnIndex <= openingEnds) {
-			// first turns use half time
-			return (maxDuration / 2) / turnsToWin();
+			// first turns use few time
+			return (totalTimeLeft / 4) / turnsToWin(turnIndex);
 		}
-		return maxDuration / turnsToWin();
+		return totalTimeLeft / turnsToWin(turnIndex);
 	}
 
-	private long getDurationAlternating(long normalDuration) {
+	private long getDurationAlternating(long normalDuration, int turnIndex) {
 		if (turnIndex % 2 > 0) {
 			return normalDuration + normalDuration / 2;
 		} else {
-			return normalDuration - normalDuration / 2;
+			// return normalDuration - normalDuration / 2;
+			return normalDuration;
 		}
 	}
 
-	private int turnsToWin() {
+	private int turnsToWin(int turnIndex) {
 		// first 75% of the game
 		if (turnIndex < expectedNumberOfTurns - (expectedNumberOfTurns / 4)) {
 			// assume equal distribution

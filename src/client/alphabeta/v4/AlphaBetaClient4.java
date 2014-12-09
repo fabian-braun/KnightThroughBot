@@ -19,7 +19,7 @@ import model.Ply;
 import model.Position;
 import transpositiontable.Entry;
 import transpositiontable.EntryType;
-import control.GameClient;
+import client.GameClient;
 import evaluate.EvaluationFunction;
 import evaluate.EvaluationFunctionDevelopment;
 
@@ -38,9 +38,16 @@ public class AlphaBetaClient4 extends GameClient {
 
 	Random random = new Random();
 
+	private static final int startDepth = 5;
+
 	long nodeCount = 0;
 
+	long preDuration = 1;
+	long prepreDuration = 1;
+
 	private Future<Ply> futureBestPly;
+
+	private long remaining = 1;
 
 	public AlphaBetaClient4(Board initialBoard) {
 		super(initialBoard);
@@ -52,17 +59,24 @@ public class AlphaBetaClient4 extends GameClient {
 		long timeToFinish = System.currentTimeMillis() + duration;
 		final Board boardF = evaluator.convertBoard(board);
 		Ply bestPly = boardF.getPossiblePlies(forPlayer).get(0);
-		// Ply bestPly = alphabeta(boardF, forPlayer, 1);
-		for (int depth = 4; depth < 15; depth++) {
-			if (bestPly.getEvaluationValue() > EvaluationFunction.infty - 30) {
+		for (int depth = startDepth; depth < 15; depth++) {
+			if (bestPly.getEvaluationValue() > EvaluationFunction.infty - 50) {
 				// bestPly is winning move
 				// don't evaluate further
 				System.out.println("winning move found: " + bestPly);
 				break;
 			}
-			long remaining = timeToFinish - System.currentTimeMillis();
-			if (remaining < duration / 2)
+			long lastRemaining = remaining;
+			remaining = timeToFinish - System.currentTimeMillis();
+			prepreDuration = preDuration;
+			preDuration = lastRemaining - remaining;
+			if (preDuration < 1)
+				preDuration = 1;
+
+			if (depth > startDepth + 2
+					&& remaining < preDuration * preDuration / prepreDuration)
 				break; // won't finish anyway
+
 			final int depthF = depth;
 			Callable<Ply> callable = new Callable<Ply>() {
 				@Override
@@ -187,17 +201,18 @@ public class AlphaBetaClient4 extends GameClient {
 				break; // prune
 			}
 		}
-		Entry tTableEntry;
-		// TODO: check if current depth is larger than entry depth (or equal).
-		// Only store new position in this case
-		if (bestValue <= alphaOrig) {
-			tTableEntry = new Entry(bestValue, EntryType.UPPERBOUND, depth);
-		} else if (bestValue >= beta) {
-			tTableEntry = new Entry(bestValue, EntryType.LOWERBOUND, depth);
-		} else {
-			tTableEntry = new Entry(bestValue, EntryType.EXACT, depth);
+		// Replacement scheme: Deep-New
+		if (saved == null || depth >= saved.getDepth()) {
+			Entry tTableEntry;
+			if (bestValue <= alphaOrig) {
+				tTableEntry = new Entry(bestValue, EntryType.UPPERBOUND, depth);
+			} else if (bestValue >= beta) {
+				tTableEntry = new Entry(bestValue, EntryType.LOWERBOUND, depth);
+			} else {
+				tTableEntry = new Entry(bestValue, EntryType.EXACT, depth);
+			}
+			tTable.put(b.getZobrist(), tTableEntry);
 		}
-		tTable.put(b.getZobrist(), tTableEntry);
 		nodeCount++;
 		return bestValue;
 	}

@@ -19,7 +19,8 @@ public class EvaluationFunctionDevelopment implements EvaluationFunction {
 		int valuePieceCount = board.getCountFor(p)
 				- board.getCountFor(p.getOpponent());
 		valuePieceCount *= 1000;
-		return valuePieceCount + board.getDevelopmentOfLastPieces(p);
+		return valuePieceCount + board.getDevelopmentOfLastPieces(p)
+				- board.getDevelopmentOfLastPieces(p.getOpponent());
 	}
 
 	@Override
