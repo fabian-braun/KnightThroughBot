@@ -8,7 +8,7 @@ public abstract class GameClient {
 
 	protected final Board initialBoard;
 
-	public static final int expectedNumberOfTurns = 14;
+	public static final int expectedNumberOfTurns = 20;
 	public static final int openingEnds = expectedNumberOfTurns / 3;
 	public static final int midGameEnds = expectedNumberOfTurns
 			- expectedNumberOfTurns / 3;

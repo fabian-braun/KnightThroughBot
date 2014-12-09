@@ -19,7 +19,7 @@ import transpositiontable.Entry;
 import transpositiontable.EntryType;
 import control.GameClient;
 import evaluate.EvaluationFunction;
-import evaluate.EvaluationFunctionPieceCount;
+import evaluate.EvaluationFunctionDevelopment;
 
 /**
  * 
@@ -28,7 +28,7 @@ import evaluate.EvaluationFunctionPieceCount;
  */
 public class AlphaBetaClient3 extends GameClient {
 
-	EvaluationFunction evaluator = new EvaluationFunctionPieceCount();
+	EvaluationFunction evaluator = new EvaluationFunctionDevelopment();
 
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 

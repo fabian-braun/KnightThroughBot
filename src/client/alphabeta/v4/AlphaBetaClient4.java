@@ -34,9 +34,9 @@ public class AlphaBetaClient4 extends GameClient {
 
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	private Map<Long, Entry> tTable = new HashMap<Long, Entry>(1000000);
+	private Map<Long, Entry> tTable = new HashMap<Long, Entry>(2000000);
 
-	Random randall = new Random();
+	Random random = new Random();
 
 	long nodeCount = 0;
 
@@ -51,7 +51,8 @@ public class AlphaBetaClient4 extends GameClient {
 		System.out.println("time for next move (seconds): " + duration / 1000);
 		long timeToFinish = System.currentTimeMillis() + duration;
 		final Board boardF = evaluator.convertBoard(board);
-		Ply bestPly = alphabeta(boardF, forPlayer, 1);
+		Ply bestPly = boardF.getPossiblePlies(forPlayer).get(0);
+		// Ply bestPly = alphabeta(boardF, forPlayer, 1);
 		for (int depth = 4; depth < 15; depth++) {
 			if (bestPly.getEvaluationValue() > EvaluationFunction.infty - 30) {
 				// bestPly is winning move
@@ -114,20 +115,21 @@ public class AlphaBetaClient4 extends GameClient {
 			}
 		} else {
 			plies = board.getPossiblePlies(forPlayer);
+			plies = sortPlies(plies, board, forPlayer);
 		}
 		int bestrating = -EvaluationFunction.infty;
 		Ply bestPly = plies.get(0);
 		for (Ply ply : plies) {
 			PlayerType captured = board.perform(ply);
 			int rating = -alphabetaRec(board, depth - 1,
-					-EvaluationFunction.infty, EvaluationFunction.infty,
+					-EvaluationFunction.infty, -bestrating + 1,
 					forPlayer.getOpponent());
 			board.undo(ply, captured);
 			if (rating > bestrating) {
 				bestPly = ply;
 				bestrating = rating;
-			} else if (rating == bestrating && randall.nextBoolean()) {
-				// add random behavior
+			} else if (rating == bestrating && random.nextBoolean()) {
+				// random behavior
 				bestPly = ply;
 			}
 		}
@@ -140,7 +142,7 @@ public class AlphaBetaClient4 extends GameClient {
 	private int alphabetaRec(Board b, int depth, int alpha, int beta,
 			PlayerType p) {
 		if (Thread.currentThread().isInterrupted()) {
-			return -EvaluationFunction.infty;
+			return EvaluationFunction.infty + 15;
 		}
 		int alphaOrig = alpha;
 		Entry saved = tTable.get(b.getZobrist());
@@ -157,7 +159,7 @@ public class AlphaBetaClient4 extends GameClient {
 			default:
 				break;
 			}
-			if (alpha > beta)
+			if (alpha >= beta)
 				return saved.getValue();
 		}
 		if (depth <= 0 || !PlayerType.NONE.equals(b.whosTheWinner())) {
@@ -186,6 +188,8 @@ public class AlphaBetaClient4 extends GameClient {
 			}
 		}
 		Entry tTableEntry;
+		// TODO: check if current depth is larger than entry depth (or equal).
+		// Only store new position in this case
 		if (bestValue <= alphaOrig) {
 			tTableEntry = new Entry(bestValue, EntryType.UPPERBOUND, depth);
 		} else if (bestValue >= beta) {
