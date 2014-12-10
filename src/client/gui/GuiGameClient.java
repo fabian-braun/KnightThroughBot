@@ -14,8 +14,8 @@ public class GuiGameClient extends GameClient {
 	LinkedBlockingQueue<Ply> plyQueue;
 	private MainFrame mainFrame;
 
-	public GuiGameClient(Board initialBoard) {
-		super(initialBoard);
+	public GuiGameClient(Board initialBoard, PlayerType player) {
+		super(initialBoard, player);
 		plyQueue = new LinkedBlockingQueue<Ply>();
 		mainFrame = new MainFrame(new RestrictiveBoard(initialBoard), plyQueue);
 		mainFrame.setVisible(true);

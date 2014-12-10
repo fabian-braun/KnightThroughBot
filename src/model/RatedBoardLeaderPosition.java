@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Stack;
+
 public class RatedBoardLeaderPosition extends RatedBoardPieceCount {
 
 	/**
@@ -9,6 +11,8 @@ public class RatedBoardLeaderPosition extends RatedBoardPieceCount {
 
 	private int downLeaderY = 1;
 	private int upLeaderY = 1;
+	private Stack<Integer> historyDown = new Stack<Integer>();
+	private Stack<Integer> historyUp = new Stack<Integer>();
 
 	public RatedBoardLeaderPosition(Board copy) {
 		super(copy);
@@ -42,17 +46,30 @@ public class RatedBoardLeaderPosition extends RatedBoardPieceCount {
 	public PlayerType perform(Ply ply) {
 		PlayerType aboutToMove = board[ply.from.y][ply.from.x];
 		if (aboutToMove.equals(PlayerType.UP)) {
+			historyUp.push(upLeaderY);
 			int y = 7 - ply.to.y;
 			if (y > upLeaderY) {
 				upLeaderY = y;
 			}
 		} else if (aboutToMove.equals(PlayerType.DOWN)) {
+			historyDown.push(downLeaderY);
 			int y = ply.to.y;
 			if (y > downLeaderY) {
 				downLeaderY = y;
 			}
 		}
 		return super.perform(ply);
+	}
+
+	@Override
+	public void undo(Ply ply, PlayerType recoverCapturedPiece) {
+		PlayerType aboutToMove = board[ply.to.y][ply.to.x];
+		if (aboutToMove.equals(PlayerType.UP)) {
+			upLeaderY = historyUp.pop();
+		} else if (aboutToMove.equals(PlayerType.DOWN)) {
+			downLeaderY = historyDown.pop();
+		}
+		super.undo(ply, recoverCapturedPiece);
 	}
 
 	public int getLeaderY(PlayerType forPlayer) {

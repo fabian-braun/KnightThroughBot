@@ -15,7 +15,6 @@ import model.PlayerType;
 import model.Ply;
 import client.GameClient;
 import evaluate.EvaluationFunction;
-import evaluate.EvaluationFunctionDevelopment;
 
 /**
  * 
@@ -24,17 +23,14 @@ import evaluate.EvaluationFunctionDevelopment;
  */
 public class AlphaBetaClientFast extends GameClient {
 
-	// EvaluationFunction evaluator = new EvaluationFunctionPieceCount();
-	EvaluationFunction evaluator = new EvaluationFunctionDevelopment();
-
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	long nodeCount = 0;
 
 	private Future<Ply> futureBestPly;
 
-	public AlphaBetaClientFast(Board initialBoard) {
-		super(initialBoard);
+	public AlphaBetaClientFast(Board initialBoard, PlayerType player) {
+		super(initialBoard, player);
 	}
 
 	@Override

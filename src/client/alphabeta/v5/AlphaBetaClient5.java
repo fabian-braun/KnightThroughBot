@@ -22,7 +22,6 @@ import transpositiontable.EntryType;
 import transpositiontable.TTable;
 import client.GameClient;
 import evaluate.EvaluationFunction;
-import evaluate.EvaluationFunctionDevelopment;
 
 /**
  * 
@@ -30,8 +29,6 @@ import evaluate.EvaluationFunctionDevelopment;
  *
  */
 public class AlphaBetaClient5 extends GameClient {
-
-	EvaluationFunction evaluator = new EvaluationFunctionDevelopment();
 
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -53,8 +50,8 @@ public class AlphaBetaClient5 extends GameClient {
 
 	private long remaining = 1;
 
-	public AlphaBetaClient5(Board initialBoard) {
-		super(initialBoard);
+	public AlphaBetaClient5(Board initialBoard, PlayerType player) {
+		super(initialBoard, player);
 	}
 
 	@Override

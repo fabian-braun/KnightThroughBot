@@ -3,12 +3,11 @@ package client.alphabeta.standard;
 import java.util.List;
 import java.util.Random;
 
-import client.GameClient;
 import model.Board;
 import model.PlayerType;
 import model.Ply;
+import client.GameClient;
 import evaluate.EvaluationFunction;
-import evaluate.EvaluationFunctionPieceCount;
 
 /**
  * The first wonderfully working alphabeta client. It's just plain old NegaMax
@@ -20,11 +19,10 @@ import evaluate.EvaluationFunctionPieceCount;
 public class AlphaBetaClient extends GameClient {
 	public static final int depth = 5;
 
-	EvaluationFunction evaluator = new EvaluationFunctionPieceCount();
 	Random r = new Random();
 
-	public AlphaBetaClient(Board initialBoard) {
-		super(initialBoard);
+	public AlphaBetaClient(Board initialBoard, PlayerType player) {
+		super(initialBoard, player);
 	}
 
 	@Override

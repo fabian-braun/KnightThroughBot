@@ -1,14 +1,14 @@
 package client.gui;
 
-import client.GameClient;
 import model.Board;
 import model.PlayerType;
 import model.Ply;
+import client.GameClient;
 
 public class MockClient extends GameClient {
 
-	public MockClient(Board initialBoard) {
-		super(initialBoard);
+	public MockClient(Board initialBoard, PlayerType player) {
+		super(initialBoard, player);
 	}
 
 	@Override

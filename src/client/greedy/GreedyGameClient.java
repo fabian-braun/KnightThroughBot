@@ -21,8 +21,8 @@ public class GreedyGameClient extends GameClient {
 					Config.valEvaluationFunctionDevelopment));
 	private Random randall = new Random();
 
-	public GreedyGameClient(Board initialBoard) {
-		super(initialBoard);
+	public GreedyGameClient(Board initialBoard, PlayerType player) {
+		super(initialBoard, player);
 	}
 
 	@Override

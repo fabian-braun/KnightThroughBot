@@ -4,10 +4,14 @@ import model.Board;
 import model.PlayerType;
 import model.Ply;
 import config.Config;
+import evaluate.EvaluationFunction;
+import evaluate.EvaluationFunctionFactory;
 
 public abstract class GameClient {
 
 	protected final Board initialBoard;
+	private final PlayerType player;
+	protected EvaluationFunction evaluator;
 
 	public static final int EXPECTED_NUMBER_OF_TURNS = (int) Config.readNumber(
 			Config.keyEstimateTotalTurns, 14);
@@ -15,18 +19,27 @@ public abstract class GameClient {
 	public static final int LAST_MIDGAME_TURN = EXPECTED_NUMBER_OF_TURNS
 			- EXPECTED_NUMBER_OF_TURNS / 3;
 
-	public GameClient(Board initialBoard) {
+	public GameClient(Board initialBoard, PlayerType player) {
 		this.initialBoard = initialBoard;
+		this.player = player;
+		String key = "";
+		if (player.equals(PlayerType.DOWN)) {
+			key = Config.keyEvaluationFunctionPlayerDown;
+		} else {
+			key = Config.keyEvaluationFunctionPlayerUp;
+		}
+		evaluator = EvaluationFunctionFactory.mapStringToEval(Config
+				.getStringValue(key, Config.valEvaluationFunctionDevelopment));
 	}
 
-	public Ply move(final Board board, final PlayerType forPlayer,
-			long maxDuration, int turnIndex) {
+	public Ply move(final Board board, PlayerType forPlayer, long maxDuration,
+			int turnIndex) {
 		long durationForNextPly = getDurationForNextPly(maxDuration, turnIndex);
 		if (LAST_OPENING_TURN < turnIndex && turnIndex <= LAST_MIDGAME_TURN) {
 			durationForNextPly = getDurationAlternating(durationForNextPly,
 					turnIndex);
 		}
-		Ply next = doMove(board, forPlayer, durationForNextPly);
+		Ply next = doMove(board, player, durationForNextPly);
 		turnIndex++;
 		return next;
 	}

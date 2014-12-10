@@ -22,7 +22,6 @@ import transpositiontable.EntryType;
 import client.GameClient;
 import client.alphabeta.v5.AlphaBetaClient5;
 import evaluate.EvaluationFunction;
-import evaluate.EvaluationFunctionDevelopment;
 
 /**
  * 
@@ -30,8 +29,6 @@ import evaluate.EvaluationFunctionDevelopment;
  *
  */
 public class AlphaBetaClient4 extends GameClient {
-
-	EvaluationFunction evaluator = new EvaluationFunctionDevelopment();
 
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -51,8 +48,8 @@ public class AlphaBetaClient4 extends GameClient {
 
 	private long remaining = 1;
 
-	public AlphaBetaClient4(Board initialBoard) {
-		super(initialBoard);
+	public AlphaBetaClient4(Board initialBoard, PlayerType player) {
+		super(initialBoard, player);
 	}
 
 	@Override

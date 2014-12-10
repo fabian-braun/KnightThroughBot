@@ -3,16 +3,16 @@ package client.random;
 import java.util.List;
 import java.util.Random;
 
-import client.GameClient;
 import model.Board;
 import model.PlayerType;
 import model.Ply;
+import client.GameClient;
 
 public class RandomClient extends GameClient {
 	Random randall = new Random();
 
-	public RandomClient(Board initialBoard) {
-		super(initialBoard);
+	public RandomClient(Board initialBoard, PlayerType player) {
+		super(initialBoard, player);
 	}
 
 	@Override
