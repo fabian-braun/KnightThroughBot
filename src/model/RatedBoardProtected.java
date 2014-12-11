@@ -40,7 +40,7 @@ public class RatedBoardProtected extends RatedBoardPieceCount {
 				x), ofPlayer);
 		int count = 0;
 		for (Position position : protectedSquares) {
-			if (getPlayerTypeSave(position.y, position.x).equals(ofPlayer)) {
+			if (getPlayerType(position.y, position.x).equals(ofPlayer)) {
 				count++;
 			}
 		}

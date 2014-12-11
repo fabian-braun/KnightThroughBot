@@ -275,6 +275,23 @@ public class Board implements Serializable {
 		return null;
 	}
 
+	public Position getPieceInMyHalf(PlayerType player) {
+		int yStart;
+		if (player.equals(PlayerType.UP))
+			yStart = 1;
+		else
+			yStart = 4;
+
+		for (int y = yStart; y < yStart + 3; y++) {
+			for (int x = 0; x < board[y].length; x++) {
+				if (board[y][x].equals(player)) {
+					return new Position(y, x);
+				}
+			}
+		}
+		return null;
+	}
+
 	public Set<Ply> getPliesToCaptureOn(PlayerType player, Position on) {
 		Set<Ply> capturePlies = new HashSet<Ply>();
 		return capturePlies;

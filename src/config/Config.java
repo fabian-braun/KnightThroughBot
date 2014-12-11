@@ -29,6 +29,8 @@ public class Config {
 	public static final String valClientTypeAlphabeta3 = "ALPHABETA_3";
 	public static final String valClientTypeAlphabeta4 = "ALPHABETA_4";
 	public static final String valClientTypeAlphabeta5 = "ALPHABETA_5";
+	public static final String valClientTypeAlphabeta6 = "ALPHABETA_6";
+	public static final String valClientTypeAlphabeta7 = "ALPHABETA_7";
 
 	public static final String keyEvaluationFunctionPlayerUp = "EVALUATION_PLAYER_UP";
 	public static final String keyEvaluationFunctionPlayerDown = "EVALUATION_PLAYER_DOWN";

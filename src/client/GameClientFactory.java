@@ -6,6 +6,8 @@ import client.alphabeta.standard.AlphaBetaClient;
 import client.alphabeta.v3.AlphaBetaClient3;
 import client.alphabeta.v4.AlphaBetaClient4;
 import client.alphabeta.v5.AlphaBetaClient5;
+import client.alphabeta.v6.AlphaBetaClient6;
+import client.alphabeta.v7.AlphaBetaClient7;
 import client.greedy.GreedyGameClient;
 import client.gui.GuiGameClient;
 import client.gui.MockClient;
@@ -56,6 +58,10 @@ public class GameClientFactory {
 				return new AlphaBetaClient4(initialBoard, player);
 			} else if (Config.valClientTypeAlphabeta5.equals(clientType)) {
 				return new AlphaBetaClient5(initialBoard, player);
+			} else if (Config.valClientTypeAlphabeta6.equals(clientType)) {
+				return new AlphaBetaClient6(initialBoard, player);
+			} else if (Config.valClientTypeAlphabeta7.equals(clientType)) {
+				return new AlphaBetaClient7(initialBoard, player);
 			} else {
 				return new RandomClient(initialBoard, player);
 			}
