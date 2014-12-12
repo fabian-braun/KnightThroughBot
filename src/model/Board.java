@@ -4,10 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import transpositiontable.TTable;
 
@@ -258,6 +256,24 @@ public class Board implements Serializable {
 		return PlayerType.NONE;
 	}
 
+	/**
+	 * this is slow. For faster count method use {@link RatedBoardPieceCount}
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public int getCountFor(PlayerType player) {
+		int count = 0;
+		for (int y = 0; y < ySize; y++) {
+			for (int x = 0; x < xSize; x++) {
+				if (board[y][x].equals(player)) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
 	public Position getThreateningPiece(PlayerType player) {
 		int yStart;
 		if (player.equals(PlayerType.UP))
@@ -292,8 +308,14 @@ public class Board implements Serializable {
 		return null;
 	}
 
-	public Set<Ply> getPliesToCaptureOn(PlayerType player, Position on) {
-		Set<Ply> capturePlies = new HashSet<Ply>();
+	public List<Ply> getCapturePlies(PlayerType player) {
+		List<Ply> allPlies = getPossiblePlies(player);
+		List<Ply> capturePlies = new LinkedList<Ply>();
+		for (Ply ply : allPlies) {
+			if (ply.to.equals(player.getOpponent())) {
+				capturePlies.add(ply);
+			}
+		}
 		return capturePlies;
 	}
 

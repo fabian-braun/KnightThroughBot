@@ -65,6 +65,7 @@ public class RatedBoardPieceCount extends Board {
 		}
 	}
 
+	@Override
 	public int getCountFor(PlayerType player) {
 		switch (player) {
 		case DOWN:
