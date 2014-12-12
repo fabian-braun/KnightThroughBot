@@ -153,8 +153,6 @@ public class GameEngine {
 	public void printTime(PlayerType player) {
 		System.out.println("total calculation time for player " + player
 				+ " : " + usedTime.get(player) / 60000. + " minutes");
-		System.out.println("needed to perform " + countPlies.get(player)
-				+ " plies");
 	}
 
 	private static PlayerType getStartingPlayer() {

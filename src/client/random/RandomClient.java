@@ -29,7 +29,6 @@ public class RandomClient extends GameClient {
 
 	@Override
 	public void announceWinner(PlayerType winner) {
-		System.out.println("And the winner is Player " + winner);
 	}
 
 	@Override

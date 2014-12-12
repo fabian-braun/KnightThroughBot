@@ -77,7 +77,7 @@ public class AlphaBetaClient extends GameClient {
 
 	@Override
 	public String getClientDescription() {
-		return "AlphaBeta v4. Uses " + evaluator.getClass().getSimpleName()
-				+ "";
+		return "Good old AlphaBeta without enhancements. Reaches depth 5. Uses "
+				+ evaluator.getClass().getSimpleName() + "";
 	}
 }

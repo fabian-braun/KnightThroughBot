@@ -69,9 +69,8 @@ public class AlphaBetaClient3 extends GameClient {
 				System.out.println("Execution Exception... this is not good");
 				e.printStackTrace();
 			} catch (TimeoutException e) {
+				futureBestPly.cancel(true);
 				System.out.println("Time was consumed during depth " + depth);
-				System.out.println("calculation was cancelled:"
-						+ futureBestPly.cancel(true));
 				break;
 			} catch (InterruptedException e) {
 				System.out
@@ -197,7 +196,7 @@ public class AlphaBetaClient3 extends GameClient {
 
 	@Override
 	public String getClientDescription() {
-		return "AlphaBeta v3. Uses iterative Deepening, TT, Move Ordering, "
+		return "AlphaBeta v3. Uses iterative Deepening, TT, Move Ordering (capture first), "
 				+ evaluator.getClass().getSimpleName() + "";
 	}
 

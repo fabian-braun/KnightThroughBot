@@ -92,9 +92,8 @@ public class AlphaBetaClient5 extends GameClient {
 				System.out.println("Execution Exception... this is not good");
 				e.printStackTrace();
 			} catch (TimeoutException e) {
+				futureBestPly.cancel(true);
 				System.out.println("Time was consumed during depth " + depth);
-				System.out.println("calculation was cancelled:"
-						+ futureBestPly.cancel(true));
 				break;
 			} catch (InterruptedException e) {
 				System.out

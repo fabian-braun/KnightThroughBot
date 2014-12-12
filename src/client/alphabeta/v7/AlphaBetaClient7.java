@@ -92,9 +92,8 @@ public class AlphaBetaClient7 extends GameClient {
 				System.out.println("Execution Exception... this is not good");
 				e.printStackTrace();
 			} catch (TimeoutException e) {
+				futureBestPly.cancel(true);
 				System.out.println("Time was consumed during depth " + depth);
-				System.out.println("calculation was cancelled:"
-						+ futureBestPly.cancel(true));
 				break;
 			} catch (InterruptedException e) {
 				System.out
@@ -188,9 +187,14 @@ public class AlphaBetaClient7 extends GameClient {
 		List<Ply> plies = null;
 		if (threateningPieceAt != null) {
 			plies = b.getPossiblePliesTo(p, threateningPieceAt);
+			if (plies.isEmpty()) {
+				nodeCount++;
+				return -EvaluationFunction.infty;
+			}
 		}
 		// opponent has piece advantage, only evaluate capture moves
-		if (plies == null && b.getCountFor(p) < b.getCountFor(p.getOpponent())) {
+		if ((plies == null)
+				&& b.getCountFor(p) < b.getCountFor(p.getOpponent())) {
 			plies = b.getCapturePlies(p);
 		}
 		if (plies == null || plies.isEmpty()) {
@@ -280,8 +284,9 @@ public class AlphaBetaClient7 extends GameClient {
 
 	@Override
 	public String getClientDescription() {
-		return "AlphaBeta v6. Uses iterative Deepening, TT, TT-based Move Ordering, Forward Pruning in dangerous positions, "
-				+ evaluator.getClass().getSimpleName() + "";
+		return "AlphaBeta v7. Uses iterative Deepening, TT, TT-based Move Ordering, Greedy Forward Pruning, "
+				+ evaluator.getClass().getSimpleName()
+				+ " - this is outperformed by AlphaBeta6 in the end game";
 	}
 
 }

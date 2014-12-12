@@ -48,8 +48,6 @@ public class Config {
 
 	public static final String keyShowGui = "SHOW_GUI";
 
-	public static final String keyEstimateTotalTurns = "EXPECTED_NUMBER_OF_TURNS";
-
 	/**
 	 * returns the value for the given key from the property file. If value
 	 * cannot be obtained from the property file, the reason is logged, and the

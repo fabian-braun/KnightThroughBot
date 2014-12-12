@@ -25,8 +25,7 @@ public class RatedBoardDevelopment extends RatedBoardPieceCount {
 					return 10 * y + (8 - count);
 				}
 			}
-			System.out.println("Unexpected case in Evaluation function");
-			return 0;
+			assert false : "Unexpected case in Evaluation function";
 		case UP:
 			for (int y = board.length - 1; y >= 0; y--) {
 				int count = 0;
@@ -39,11 +38,10 @@ public class RatedBoardDevelopment extends RatedBoardPieceCount {
 					return 10 * (7 - y) + (8 - count);
 				}
 			}
-			System.out.println("Unexpected case in Evaluation function");
-			return 0;
+			assert false : "Unexpected case in Evaluation function";
 		default:
-			System.out.println("Unexpected case in Evaluation function");
-			return 0;
+			assert false : "Unexpected case in Evaluation function";
 		}
+		return 0;
 	}
 }

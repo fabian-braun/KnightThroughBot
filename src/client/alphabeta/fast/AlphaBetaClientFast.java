@@ -61,9 +61,8 @@ public class AlphaBetaClientFast extends GameClient {
 				System.out.println("Execution Exception... this is not good");
 				e.printStackTrace();
 			} catch (TimeoutException e) {
+				futureBestPly.cancel(true);
 				System.out.println("Time was consumed during depth " + depth);
-				System.out.println("calculation was cancelled:"
-						+ futureBestPly.cancel(true));
 				break;
 			} catch (InterruptedException e) {
 				System.out
@@ -142,16 +141,12 @@ public class AlphaBetaClientFast extends GameClient {
 	@Override
 	public void announceWinner(PlayerType winner) {
 		futureBestPly.cancel(true);
-		try {
-			executor.awaitTermination(1, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		executor.shutdown();
 	}
 
 	@Override
 	public String getClientDescription() {
-		return "AlphaBeta Fast. Uses iterative Deepening, Move Ordering, "
+		return "AlphaBeta Fast. Uses iterative Deepening, Move Ordering based on evaluation, "
 				+ evaluator.getClass().getSimpleName() + "";
 	}
 
