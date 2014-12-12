@@ -57,7 +57,7 @@ public class AlphaBetaClient4 extends GameClient {
 		System.out.println("time for next move (seconds): " + duration / 1000);
 		long timeToFinish = System.currentTimeMillis() + duration;
 		final Board boardF = evaluator.convertBoard(board);
-		Ply bestPly = boardF.getPossiblePlies(forPlayer).get(0);
+		Ply bestPly = alphabeta(boardF, forPlayer, 1);
 		for (int depth = startDepth; depth < 15; depth++) {
 			if (bestPly.getEvaluationValue() > EvaluationFunction.infty - 50) {
 				// bestPly is winning move
