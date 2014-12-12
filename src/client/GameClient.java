@@ -18,6 +18,18 @@ public abstract class GameClient {
 	public static final int LAST_OPENING_TURN = 2;
 	public static final int LAST_MIDGAME_TURN = EXPECTED_NUMBER_OF_TURNS
 			- EXPECTED_NUMBER_OF_TURNS / 3;
+	public static final double[] timefraction = new double[] { 1, 1, 1, 2, 4,
+			6, 8, 8, 6.5, 6.5, 5, 4 };
+	static {
+		// normalize time
+		double sum = 0;
+		for (double d : timefraction) {
+			sum += d;
+		}
+		for (int i = 0; i < timefraction.length; i++) {
+			timefraction[i] = timefraction[i] / sum;
+		}
+	}
 
 	public GameClient(Board initialBoard, PlayerType player) {
 		this.initialBoard = initialBoard;
@@ -35,44 +47,19 @@ public abstract class GameClient {
 	public Ply move(final Board board, PlayerType forPlayer, long maxDuration,
 			int turnIndex) {
 		long durationForNextPly = getDurationForNextPly(maxDuration, turnIndex);
-		if (LAST_OPENING_TURN < turnIndex && turnIndex <= LAST_MIDGAME_TURN) {
-			durationForNextPly = getDurationAlternating(durationForNextPly,
-					turnIndex);
-		}
 		Ply next = doMove(board, player, durationForNextPly);
 		turnIndex++;
 		return next;
 	}
 
 	private long getDurationForNextPly(long totalTimeLeft, int turnIndex) {
-		if (turnIndex <= LAST_OPENING_TURN) {
-			// first turns use few time
-			return (totalTimeLeft / 4) / turnsToWin(turnIndex);
-		}
-		return totalTimeLeft / turnsToWin(turnIndex);
-	}
-
-	private long getDurationAlternating(long normalDuration, int turnIndex) {
-		if (turnIndex % 2 > 0) {
-			return normalDuration + normalDuration / 2;
+		if (turnIndex < timefraction.length) {
+			return (long) (totalTimeLeft * timefraction[turnIndex]);
 		} else {
-			// return normalDuration - normalDuration / 2;
-			return normalDuration;
+			// we exceeded estimated number of moves already. Assume 3 plies
+			// left
+			return totalTimeLeft / 3;
 		}
-	}
-
-	private int turnsToWin(int turnIndex) {
-		// first 75% of the game
-		if (turnIndex < EXPECTED_NUMBER_OF_TURNS
-				- (EXPECTED_NUMBER_OF_TURNS / 4)) {
-			// assume equal distribution
-			return EXPECTED_NUMBER_OF_TURNS - turnIndex;
-		} else if (turnIndex < EXPECTED_NUMBER_OF_TURNS
-				- (EXPECTED_NUMBER_OF_TURNS / 6)) {
-			// 75% to 83%
-			return EXPECTED_NUMBER_OF_TURNS / 4;
-		}
-		return EXPECTED_NUMBER_OF_TURNS / 6;
 	}
 
 	// duration = millisec
