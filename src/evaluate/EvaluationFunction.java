@@ -8,7 +8,7 @@ public interface EvaluationFunction {
 	// infinity
 	public static final int infty = 1000000;
 
-	public int evaluate(Board b, PlayerType p, int depth);
+	public int evaluate(Board b, PlayerType p);
 
 	public abstract Board convertBoard(Board board);
 }

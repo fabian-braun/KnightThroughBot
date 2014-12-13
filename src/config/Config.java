@@ -38,7 +38,8 @@ public class Config {
 	public static final String valEvaluationFunctionLeaderPosition = "LEADER_POS";
 	public static final String valEvaluationFunctionPieceCount = "PIECE_COUNT";
 	public static final String valEvaluationFunctionPieceCountAdvanced = "STRUCTURE";
-	public static final String valEvaluationFunctionProtected = "PROTECTION";
+	public static final String valEvaluationFunctionZickZack = "ZICKZACK";
+	public static final String valEvaluationFunctionZickZackDevelopment = "ZICKZACKDEVELOPMENT";
 
 	public static final String keyTotalTimePlayerUp = "TOTAL_TIME_PLAYER_UP";
 	public static final String keyTotalTimePlayerDown = "TOTAL_TIME_PLAYER_DOWN";

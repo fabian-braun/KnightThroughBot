@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import transpositiontable.TTable;
 
@@ -335,6 +337,26 @@ public class Board implements Serializable {
 		if (!Arrays.deepEquals(board, other.board))
 			return false;
 		return true;
+	}
+
+	public Set<Position> findDifferencesTo(Board other) {
+		if (other == null) {
+			return new HashSet<Position>();
+		}
+		if (other.ySize != this.ySize || other.xSize != this.xSize) {
+			System.out
+					.println("Boards cannot be compared, as they have different dimensions");
+			return new HashSet<Position>();
+		}
+		Set<Position> differences = new HashSet<Position>();
+		for (int y = 0; y < ySize; y++) {
+			for (int x = 0; x < xSize; x++) {
+				if (board[y][x] != other.board[y][x]) {
+					differences.add(new Position(y, x));
+				}
+			}
+		}
+		return differences;
 	}
 
 }

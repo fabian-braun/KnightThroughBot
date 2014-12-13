@@ -13,8 +13,8 @@ public abstract class GameClient {
 	private final PlayerType player;
 	protected EvaluationFunction evaluator;
 
-	public static final double[] timefraction = new double[] { 1, 1, 1, 2, 4,
-			6, 8, 8, 7, 6.5, 6 };
+	private static final double[] timefraction = new double[] { 0.1, 1, 2, 3,
+			6, 9, 9.5, 10, 10.5 };
 	static {
 		// normalize time
 		double sum = 0;

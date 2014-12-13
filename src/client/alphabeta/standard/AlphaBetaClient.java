@@ -47,8 +47,7 @@ public class AlphaBetaClient extends GameClient {
 
 	private int alphabeta(Board b, int depth, int alpha, int beta, PlayerType p) {
 		if (!PlayerType.NONE.equals(b.whosTheWinner()) || depth <= 0) {
-			return evaluator.evaluate(b, p, 30 - depth) * 1000 + r.nextInt(5)
-					- 2;
+			return evaluator.evaluate(b, p) * 1000 + r.nextInt(5) - 2 + depth;
 		}
 		int score = -EvaluationFunction.infty;
 		List<Ply> plies = b.getPossiblePlies(p);

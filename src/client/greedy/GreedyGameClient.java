@@ -7,18 +7,10 @@ import java.util.Random;
 import model.Board;
 import model.PlayerType;
 import model.Ply;
-import model.RatedBoardPieceCount;
 import client.GameClient;
-import config.Config;
-import evaluate.EvaluationFunction;
-import evaluate.EvaluationFunctionFactory;
 
 public class GreedyGameClient extends GameClient {
 
-	private EvaluationFunction evaluator = EvaluationFunctionFactory
-			.mapStringToEval(Config.getStringValue(
-					Config.keyEvaluationFunctionPlayerDown,
-					Config.valEvaluationFunctionDevelopment));
 	private Random randall = new Random();
 
 	public GreedyGameClient(Board initialBoard, PlayerType player) {
@@ -27,7 +19,7 @@ public class GreedyGameClient extends GameClient {
 
 	@Override
 	public Ply doMove(Board board, PlayerType forPlayer, long maxDuration) {
-		board = new RatedBoardPieceCount(board);
+		board = evaluator.convertBoard(board);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -38,7 +30,7 @@ public class GreedyGameClient extends GameClient {
 		int bestrating = Integer.MIN_VALUE + 1;
 		for (Ply ply : plies) {
 			PlayerType captured = board.perform(ply);
-			int rating = evaluator.evaluate(board, forPlayer, 0);
+			int rating = evaluator.evaluate(board, forPlayer);
 			if (rating > bestrating) {
 				bestPlies.clear();
 				bestrating = rating;

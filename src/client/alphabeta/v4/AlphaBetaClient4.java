@@ -176,7 +176,7 @@ public class AlphaBetaClient4 extends GameClient {
 		}
 		if (depth <= 0 || !PlayerType.NONE.equals(b.whosTheWinner())) {
 			nodeCount++;
-			return evaluator.evaluate(b, p, 30 - depth);
+			return evaluator.evaluate(b, p) + depth;
 		}
 		int bestValue = -EvaluationFunction.infty;
 		List<Ply> plies = b.getPossiblePlies(p);

@@ -16,8 +16,11 @@ public class EvaluationFunctionFactory {
 		} else if (Config.valEvaluationFunctionPieceCountAdvanced
 				.equals(functionType)) {
 			return new EvaluationFunctionPieceCountAdvanced();
-		} else if (Config.valEvaluationFunctionProtected.equals(functionType)) {
-			return new EvaluationFunctionProtected();
+		} else if (Config.valEvaluationFunctionZickZack.equals(functionType)) {
+			return new EvaluationFunctionZickZack();
+		} else if (Config.valEvaluationFunctionZickZackDevelopment
+				.equals(functionType)) {
+			return new EvaluationFunctionZickZackDevelopment();
 		} else {
 			throw new GameException("the specified functionType "
 					+ functionType + " does not exist");

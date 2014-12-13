@@ -10,32 +10,29 @@ import client.alphabeta.v6.AlphaBetaClient6;
 import client.alphabeta.v7.AlphaBetaClient7;
 import client.greedy.GreedyGameClient;
 import client.gui.GuiGameClient;
-import client.gui.MockClient;
 import client.random.RandomClient;
 import config.Config;
 
 public class GameClientFactory {
 
-	public static GameClient[] getClients(Board initialBoard, boolean showGui) {
-		GameClient[] clients = new GameClient[3];
+	public static GameClient[] getClients(Board initialBoard) {
+		GameClient[] clients = new GameClient[2];
 		String clientTypeDown = Config.getStringValue(
 				Config.keyClientTypePlayerDown, Config.valClientTypeRandom);
 		String clientTypeUp = Config.getStringValue(
 				Config.keyClientTypePlayerUp, Config.valClientTypeGui);
+		boolean guiRequired = false;
 		if (Config.valClientTypeGui.equals(clientTypeDown)
 				|| Config.valClientTypeGui.equals(clientTypeUp)) {
-			showGui = true;
+			guiRequired = true;
 		}
 		GameClient gui = null;
-		if (showGui) {
+		if (guiRequired) {
 			gui = new GuiGameClient(initialBoard, PlayerType.NONE);
-		} else {
-			gui = new MockClient(initialBoard, PlayerType.NONE);
 		}
-		clients[0] = gui;
-		clients[1] = mapStringToClient(clientTypeDown, gui, PlayerType.DOWN,
+		clients[0] = mapStringToClient(clientTypeDown, gui, PlayerType.DOWN,
 				initialBoard);
-		clients[2] = mapStringToClient(clientTypeUp, gui, PlayerType.UP,
+		clients[1] = mapStringToClient(clientTypeUp, gui, PlayerType.UP,
 				initialBoard);
 		return clients;
 	}

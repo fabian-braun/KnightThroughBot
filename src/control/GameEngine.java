@@ -15,6 +15,8 @@ import model.RestrictiveBoard;
 import model.SavedGame;
 import client.GameClient;
 import client.GameClientFactory;
+import client.gui.GuiGameClient;
+import client.gui.MockClient;
 import config.Config;
 import error.GameException;
 
@@ -78,15 +80,21 @@ public class GameEngine {
 
 	public void doGame() {
 		boolean gameover = false;
-		GameClient[] clients = GameClientFactory.getClients(initialBoard,
-				showGui);
-		GameClient gui = clients[0];
-		GameClient playerDown = clients[1];
+		GameClient[] clients = GameClientFactory.getClients(initialBoard);
+		GameClient playerDown = clients[0];
 		System.out.println("Player Down Client: "
 				+ playerDown.getClientDescription());
-		GameClient playerUp = clients[2];
+		GameClient playerUp = clients[1];
 		System.out.println("Player Up Client: "
 				+ playerUp.getClientDescription());
+
+		GameClient gui = new MockClient(initialBoard, PlayerType.NONE);
+		if (showGui && !(playerDown instanceof GuiGameClient)
+				&& !(playerUp instanceof GuiGameClient)) {
+			// only init gui if none of the existing clients is a gui client
+			gui = new GuiGameClient(initialBoard, PlayerType.NONE);
+		}
+
 		// set to opponent because player is swapped at beginning of loop
 		PlayerType playerToMove = startingPlayer.getOpponent();
 		GameClient clientToMove;

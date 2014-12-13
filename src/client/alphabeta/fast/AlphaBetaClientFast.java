@@ -102,7 +102,7 @@ public class AlphaBetaClientFast extends GameClient {
 		}
 		if (!PlayerType.NONE.equals(b.whosTheWinner()) || depth <= 0) {
 			nodeCount++;
-			return evaluator.evaluate(b, p, 30 - depth);
+			return evaluator.evaluate(b, p) + depth;
 		}
 		int score = -EvaluationFunction.infty;
 		List<Ply> plies = b.getPossiblePlies(p);

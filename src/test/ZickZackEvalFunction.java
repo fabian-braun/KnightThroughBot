@@ -4,32 +4,32 @@ import model.BoardFactory;
 import model.PlayerType;
 import model.Ply;
 import model.Position;
-import model.RatedBoardDevelopment;
+import model.RatedBoardZickZack;
 
 import org.junit.Test;
 
-import evaluate.EvaluationFunctionDevelopment;
+import evaluate.EvaluationFunctionZickZack;
 
-public class DevelopmentEvalFunction {
+public class ZickZackEvalFunction {
 
 	@Test
 	public void test() {
-		RatedBoardDevelopment board = new RatedBoardDevelopment(
+		RatedBoardZickZack board = new RatedBoardZickZack(
 				BoardFactory.createStandardBoard());
 		System.out.println(board);
-		System.out.println(board.getDevelopmentOfLastPieces(PlayerType.UP));
-		System.out.println(board.getDevelopmentOfLastPieces(PlayerType.DOWN));
+		System.out.println(board.getOccupiedZickZackCount(PlayerType.UP));
+		System.out.println(board.getOccupiedZickZackCount(PlayerType.DOWN));
 		for (int x = 0; x < 7; x++) {
 			board.perform(new Ply(new Position(0, x), new Position(2, x + 1)));
 		}
 		System.out.println(board);
-		System.out.println(board.getDevelopmentOfLastPieces(PlayerType.UP));
-		System.out.println(board.getDevelopmentOfLastPieces(PlayerType.DOWN));
+		System.out.println(board.getOccupiedZickZackCount(PlayerType.UP));
+		System.out.println(board.getOccupiedZickZackCount(PlayerType.DOWN));
 		board.perform(new Ply(new Position(2, 6), new Position(4, 7)));
 		board.perform(new Ply(new Position(0, 7), new Position(2, 6)));
 		System.out.println(board);
-		System.out.println(board.getDevelopmentOfLastPieces(PlayerType.UP));
-		System.out.println(board.getDevelopmentOfLastPieces(PlayerType.DOWN));
+		System.out.println(board.getOccupiedZickZackCount(PlayerType.UP));
+		System.out.println(board.getOccupiedZickZackCount(PlayerType.DOWN));
 		for (int x = 0; x < 7; x++) {
 			board.perform(new Ply(new Position(7, x), new Position(5, x + 1)));
 		}
@@ -38,18 +38,18 @@ public class DevelopmentEvalFunction {
 		board.perform(new Ply(new Position(7, 7), new Position(5, 6)));
 		board.perform(new Ply(new Position(6, 5), new Position(4, 6)));
 		System.out.println(board);
-		System.out.println(board.getDevelopmentOfLastPieces(PlayerType.UP));
-		System.out.println(board.getDevelopmentOfLastPieces(PlayerType.DOWN));
+		System.out.println(board.getOccupiedZickZackCount(PlayerType.UP));
+		System.out.println(board.getOccupiedZickZackCount(PlayerType.DOWN));
 
 		board.perform(new Ply(new Position(6, 0), new Position(4, 1)));
 		board.perform(new Ply(new Position(6, 1), new Position(4, 2)));
 		board.perform(new Ply(new Position(6, 2), new Position(4, 3)));
 		board.perform(new Ply(new Position(4, 4), new Position(2, 3)));
 		System.out.println(board);
-		System.out.println(board.getDevelopmentOfLastPieces(PlayerType.UP));
-		System.out.println(board.getDevelopmentOfLastPieces(PlayerType.DOWN));
+		System.out.println(board.getOccupiedZickZackCount(PlayerType.UP));
+		System.out.println(board.getOccupiedZickZackCount(PlayerType.DOWN));
 
-		EvaluationFunctionDevelopment devel = new EvaluationFunctionDevelopment();
+		EvaluationFunctionZickZack devel = new EvaluationFunctionZickZack();
 		int eval = devel.evaluate(board, PlayerType.UP);
 		System.out.println(eval);
 	}

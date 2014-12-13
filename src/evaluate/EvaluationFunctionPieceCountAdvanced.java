@@ -7,12 +7,12 @@ import model.RatedBoardPieceCountAdvanced;
 public class EvaluationFunctionPieceCountAdvanced implements EvaluationFunction {
 
 	@Override
-	public int evaluate(Board b, PlayerType p, int depth) {
+	public int evaluate(Board b, PlayerType p) {
 		PlayerType winner = b.whosTheWinner();
 		if (winner.equals(p)) {
-			return infty - depth;
+			return infty;
 		} else if (winner.equals(p.getOpponent())) {
-			return -infty + depth;
+			return -infty;
 		}
 		RatedBoardPieceCountAdvanced board = (RatedBoardPieceCountAdvanced) b;
 

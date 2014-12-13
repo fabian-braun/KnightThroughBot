@@ -2,9 +2,10 @@ package evaluate;
 
 import model.Board;
 import model.PlayerType;
-import model.RatedBoardDevelopment;
+import model.RatedBoardZickZackDevelopment;
 
-public class EvaluationFunctionDevelopment implements EvaluationFunction {
+public class EvaluationFunctionZickZackDevelopment implements
+		EvaluationFunction {
 
 	@Override
 	public int evaluate(Board b, PlayerType p) {
@@ -14,18 +15,21 @@ public class EvaluationFunctionDevelopment implements EvaluationFunction {
 		} else if (winner.equals(p.getOpponent())) {
 			return -infty;
 		}
-		RatedBoardDevelopment board = (RatedBoardDevelopment) b;
+		RatedBoardZickZackDevelopment board = (RatedBoardZickZackDevelopment) b;
 
 		int valuePieceCount = board.getCountFor(p)
 				- board.getCountFor(p.getOpponent());
 		valuePieceCount *= 1000;
-		return valuePieceCount + board.getDevelopmentOfLastPieces(p)
+		valuePieceCount += 10 * (board.getOccupiedZickZackCount(p) - board
+				.getOccupiedZickZackCount(p.getOpponent()));
+		valuePieceCount += board.getDevelopmentOfLastPieces(p)
 				- board.getDevelopmentOfLastPieces(p.getOpponent());
+		return valuePieceCount;
 	}
 
 	@Override
 	public Board convertBoard(Board board) {
-		return new RatedBoardDevelopment(board);
+		return new RatedBoardZickZackDevelopment(board);
 	}
 
 }

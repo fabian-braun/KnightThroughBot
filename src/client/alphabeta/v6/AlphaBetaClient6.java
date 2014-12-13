@@ -179,7 +179,7 @@ public class AlphaBetaClient6 extends GameClient {
 		}
 		if (depth <= 0 || !PlayerType.NONE.equals(b.whosTheWinner())) {
 			nodeCount++;
-			return evaluator.evaluate(b, p, 30 - depth);
+			return evaluator.evaluate(b, p) + depth;
 		}
 
 		// forward pruning
@@ -188,8 +188,9 @@ public class AlphaBetaClient6 extends GameClient {
 		if (threateningPieceAt != null) {
 			plies = b.getPossiblePliesTo(p, threateningPieceAt);
 			if (plies.isEmpty()) {
+				// we lost
 				nodeCount++;
-				return -EvaluationFunction.infty;
+				return -EvaluationFunction.infty - depth;
 			}
 		} else {
 			plies = b.getPossiblePlies(p);

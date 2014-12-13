@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.imageio.ImageIO;
@@ -46,6 +47,8 @@ public class MainPanel extends JPanel {
 	public static final Color shinyColor = new Color(168, 245, 255);
 	// set color of selected tiles
 	public static final Color selectedColor = new Color(128, 12, 200);
+	// set color of changed tiles
+	public static final Color changedColor = new Color(255, 140, 0);
 
 	private JButton[][] tiles;
 	private Image greenFrog;
@@ -155,10 +158,13 @@ public class MainPanel extends JPanel {
 
 	public final void updateBoardPanel(RestrictiveBoard board,
 			PlayerType currentPlayer) {
+		Set<Position> changes = board.findDifferencesTo(this.board);
 		this.board = board;
 		for (int y = 0; y < board.getRowCount(); y++) {
 			for (int x = 0; x < board.getColCount(); x++) {
-				if (x % 2 == y % 2) {
+				if (changes.contains(new Position(y, x))) {
+					tiles[y][x].setBackground(changedColor);
+				} else if (x % 2 == y % 2) {
 					tiles[y][x].setBackground(shinyColor);
 				} else {
 					tiles[y][x].setBackground(darkColor);
@@ -218,7 +224,11 @@ public class MainPanel extends JPanel {
 					break;
 				}
 				tiles[selectedPosition.y][selectedPosition.x].setIcon(null);
-				plyContainer.add(new Ply(selectedPosition, p));
+				Ply performed = new Ply(selectedPosition, p);
+				RestrictiveBoard copy = new RestrictiveBoard(board);
+				copy.perform(performed);
+				updateBoardPanel(copy, PlayerType.NONE);
+				plyContainer.add(performed);
 			} else {
 				// not a valid target
 				// reset selected frog
