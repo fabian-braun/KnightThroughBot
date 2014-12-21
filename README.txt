@@ -8,7 +8,7 @@ Fabian Braun
 To run this program a Java Runtime Environment in version 7 is required.
 Please extract the .zip-archive.
 It contains the following folder structure:
-- randomTheLucky (parent folder)
+- KnightThrough_Fabian_Braun (parent folder)
 	\- run.bat (shell script for execution on Windows OS)
 	\- randomTheLucky.jar (runnable .jar-file, no program arguments required)
 	\- save (directory for saved games, empty initially)
