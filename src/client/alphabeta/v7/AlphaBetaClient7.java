@@ -193,9 +193,9 @@ public class AlphaBetaClient7 extends GameClient {
 				return -EvaluationFunction.infty - depth;
 			}
 		}
-		// opponent has piece advantage, only evaluate capture moves
 		if ((plies == null)
 				&& b.getCountFor(p) < b.getCountFor(p.getOpponent())) {
+			// opponent has piece advantage, only evaluate capture moves
 			plies = b.getCapturePlies(p);
 		}
 		if (plies == null || plies.isEmpty()) {

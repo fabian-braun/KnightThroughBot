@@ -44,7 +44,7 @@ public class MainPanel extends JPanel {
 	// set color of darker tiles
 	public static final Color darkColor = new Color(13, 76, 117);
 	// set color of shiny tiles
-	public static final Color shinyColor = new Color(168, 245, 255);
+	public static final Color shinyColor = new Color(130, 180, 200);
 	// set color of selected tiles
 	public static final Color selectedColor = new Color(128, 12, 200);
 	// set color of changed tiles

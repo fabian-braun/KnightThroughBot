@@ -314,7 +314,7 @@ public class Board implements Serializable {
 		List<Ply> allPlies = getPossiblePlies(player);
 		List<Ply> capturePlies = new LinkedList<Ply>();
 		for (Ply ply : allPlies) {
-			if (ply.to.equals(player.getOpponent())) {
+			if (board[ply.to.y][ply.to.x].equals(player.getOpponent())) {
 				capturePlies.add(ply);
 			}
 		}
