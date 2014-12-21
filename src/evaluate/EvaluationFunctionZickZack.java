@@ -4,6 +4,10 @@ import model.Board;
 import model.PlayerType;
 import model.RatedBoardZickZack;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class EvaluationFunctionZickZack implements EvaluationFunction {
 
 	@Override

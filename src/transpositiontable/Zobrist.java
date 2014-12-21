@@ -4,11 +4,12 @@ import java.util.Random;
 
 import model.PlayerType;
 
-public class TTable {
+public class Zobrist {
 
 	public static final long[][][] rNumbers = new long[8][8][2];
 
 	static {
+		// init random zobrist hashes
 		Random randall = new Random();
 		for (int y = 0; y < rNumbers.length; y++) {
 			for (int x = 0; x < rNumbers[0].length; x++) {
@@ -17,14 +18,20 @@ public class TTable {
 				}
 			}
 		}
-
 	}
 
+	/**
+	 * gives the random hash value for {@link PlayerType} UP and DOWN at a
+	 * certain position. {@link PlayerType}.NONE is not a valid argument and can
+	 * cause undefined behavior.
+	 * 
+	 * @param y
+	 * @param x
+	 * @param player
+	 * @return
+	 */
 	public static long code(int y, int x, PlayerType player) {
-		// this check can be uncommented as this never happens
-		// if (PlayerType.NONE.equals(player))
-		// throw new GameException(
-		// "zobrist hash should not be changed for PlayerType.NONE");
+		assert !PlayerType.NONE.equals(player) : "zobrist hash for PlayerType.NONE does not exist";
 		int pIndex = PlayerType.DOWN.equals(player) ? 0 : 1;
 		return rNumbers[y][x][pIndex];
 	}

@@ -9,6 +9,10 @@ import model.PlayerType;
 import model.Ply;
 import client.GameClient;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class GreedyGameClient extends GameClient {
 
 	private Random randall = new Random();

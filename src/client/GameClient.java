@@ -7,6 +7,10 @@ import config.Config;
 import evaluate.EvaluationFunction;
 import evaluate.EvaluationFunctionFactory;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public abstract class GameClient {
 
 	protected final Board initialBoard;

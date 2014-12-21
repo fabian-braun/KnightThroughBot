@@ -9,6 +9,10 @@ import model.PlayerType;
 import model.Ply;
 import model.RestrictiveBoard;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class MainFrame extends JFrame {
 
 	/**

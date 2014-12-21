@@ -1,10 +1,9 @@
-package client.alphabeta.v6;
+package client.alphabeta;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -16,41 +15,26 @@ import java.util.concurrent.TimeoutException;
 import model.Board;
 import model.PlayerType;
 import model.Ply;
-import model.Position;
 import transpositiontable.Entry;
 import transpositiontable.EntryType;
-import transpositiontable.TTable;
 import client.GameClient;
 import evaluate.EvaluationFunction;
 
 /**
- * 
- * @author Fabian
+ * @author Fabian Braun
  *
  */
-public class AlphaBetaClient6 extends GameClient {
+public class AlphaBetaClient3 extends GameClient {
 
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	public static final int TT_SIZE = 10000000;
-
-	private Map<Long, Entry> tTable = new HashMap<Long, Entry>(TT_SIZE);
-	private Map<Long, Entry> tTablePrevious = new HashMap<Long, Entry>(TT_SIZE);
-
-	Random random = new Random();
-
-	private static final int startDepth = 5;
+	private Map<Long, Entry> tTable = new HashMap<Long, Entry>(1000000);
 
 	long nodeCount = 0;
 
-	long preDuration = 1;
-	long prepreDuration = 1;
-
 	private Future<Ply> futureBestPly;
 
-	private long remaining = 1;
-
-	public AlphaBetaClient6(Board initialBoard, PlayerType player) {
+	public AlphaBetaClient3(Board initialBoard, PlayerType player) {
 		super(initialBoard, player);
 	}
 
@@ -60,24 +44,16 @@ public class AlphaBetaClient6 extends GameClient {
 		long timeToFinish = System.currentTimeMillis() + duration;
 		final Board boardF = evaluator.convertBoard(board);
 		Ply bestPly = alphabeta(boardF, forPlayer, 1);
-		for (int depth = startDepth; depth < 15; depth++) {
-			if (bestPly.getEvaluationValue() > EvaluationFunction.infty - 50) {
+		for (int depth = 4; depth < 15; depth++) {
+			if (bestPly.getEvaluationValue() > EvaluationFunction.infty - 30) {
 				// bestPly is winning move
 				// don't evaluate further
 				System.out.println("winning move found: " + bestPly);
 				break;
 			}
-			long lastRemaining = remaining;
-			remaining = timeToFinish - System.currentTimeMillis();
-			prepreDuration = preDuration;
-			preDuration = lastRemaining - remaining;
-			if (preDuration < 1)
-				preDuration = 1;
-
-			if (depth > startDepth + 2
-					&& remaining < preDuration * preDuration / prepreDuration)
+			long remaining = timeToFinish - System.currentTimeMillis();
+			if (remaining < duration / 2)
 				break; // won't finish anyway
-
 			final int depthF = depth;
 			Callable<Ply> callable = new Callable<Ply>() {
 				@Override
@@ -107,45 +83,19 @@ public class AlphaBetaClient6 extends GameClient {
 
 	private Ply alphabeta(Board board, PlayerType forPlayer, int depth) {
 		nodeCount = 0;
-		tTablePrevious = tTable;
-		tTable = new HashMap<Long, Entry>(TT_SIZE);
-		List<Ply> plies;
-		Position threateningPieceAt = board.getThreateningPiece(forPlayer
-				.getOpponent());
-		if (threateningPieceAt != null) {
-			List<Ply> capturePlies = board.getPossiblePliesTo(forPlayer,
-					threateningPieceAt);
-			if (capturePlies.size() == 1) {
-				// capturing is the only option
-				System.out.println("Forced capture move");
-				return capturePlies.get(0);
-			} else if (capturePlies.size() > 1) {
-				System.out.println("Only evaluate " + capturePlies.size()
-						+ " capture moves");
-				plies = capturePlies;
-			} else {
-				// we lost anyway
-				// could also do random move here
-				plies = board.getPossiblePlies(forPlayer);
-			}
-		} else {
-			plies = board.getPossiblePlies(forPlayer);
-			plies = sortPlies(plies, board, forPlayer);
-		}
+		tTable.clear();
+		List<Ply> plies = board.getPossiblePlies(forPlayer);
 		int bestrating = -EvaluationFunction.infty;
 		Ply bestPly = plies.get(0);
 		for (Ply ply : plies) {
 			PlayerType captured = board.perform(ply);
 			int rating = -alphabetaRec(board, depth - 1,
-					-EvaluationFunction.infty, -bestrating + 1,
+					-EvaluationFunction.infty, EvaluationFunction.infty,
 					forPlayer.getOpponent());
 			board.undo(ply, captured);
 			if (rating > bestrating) {
 				bestPly = ply;
 				bestrating = rating;
-			} else if (rating == bestrating && random.nextBoolean()) {
-				// random behavior
-				bestPly = ply;
 			}
 		}
 		bestPly.setEvaluationValue(bestrating);
@@ -174,33 +124,19 @@ public class AlphaBetaClient6 extends GameClient {
 			default:
 				break;
 			}
-			if (alpha >= beta)
+			if (alpha > beta)
 				return saved.getValue();
 		}
 		if (depth <= 0 || !PlayerType.NONE.equals(b.whosTheWinner())) {
 			nodeCount++;
 			return evaluator.evaluate(b, p) + depth;
 		}
-
-		// forward pruning
-		Position threateningPieceAt = b.getThreateningPiece(p.getOpponent());
-		List<Ply> plies = null;
-		if (threateningPieceAt != null) {
-			plies = b.getPossiblePliesTo(p, threateningPieceAt);
-			if (plies.isEmpty()) {
-				// we lost
-				nodeCount++;
-				return -EvaluationFunction.infty - depth;
-			}
-		} else {
-			plies = b.getPossiblePlies(p);
-		}
+		int bestValue = -EvaluationFunction.infty;
+		List<Ply> plies = b.getPossiblePlies(p);
 		// move ordering
 		if (depth > 1) {
 			plies = sortPlies(plies, b, p);
 		}
-
-		int bestValue = -EvaluationFunction.infty;
 		for (Ply ply : plies) {
 			PlayerType captured = b.perform(ply);
 			int value = -alphabetaRec(b, depth - 1, -beta, -alpha,
@@ -216,18 +152,15 @@ public class AlphaBetaClient6 extends GameClient {
 				break; // prune
 			}
 		}
-		// Replacement scheme: Deep-New
-		if (saved == null || depth >= saved.getDepth()) {
-			Entry tTableEntry;
-			if (bestValue <= alphaOrig) {
-				tTableEntry = new Entry(bestValue, EntryType.UPPERBOUND, depth);
-			} else if (bestValue >= beta) {
-				tTableEntry = new Entry(bestValue, EntryType.LOWERBOUND, depth);
-			} else {
-				tTableEntry = new Entry(bestValue, EntryType.EXACT, depth);
-			}
-			tTable.put(b.getZobrist(), tTableEntry);
+		Entry tTableEntry;
+		if (bestValue <= alphaOrig) {
+			tTableEntry = new Entry(bestValue, EntryType.UPPERBOUND, depth);
+		} else if (bestValue >= beta) {
+			tTableEntry = new Entry(bestValue, EntryType.LOWERBOUND, depth);
+		} else {
+			tTableEntry = new Entry(bestValue, EntryType.EXACT, depth);
 		}
+		tTable.put(b.getZobrist(), tTableEntry);
 		nodeCount++;
 		return bestValue;
 	}
@@ -241,33 +174,16 @@ public class AlphaBetaClient6 extends GameClient {
 	 * @param player
 	 * @return new sorted List
 	 */
-	private List<Ply> sortPlies(List<Ply> plies, final Board b,
-			PlayerType player) {
+	private List<Ply> sortPlies(List<Ply> plies, Board b, PlayerType player) {
 		LinkedList<Ply> sorted = new LinkedList<Ply>();
 		for (Ply ply : plies) {
-			long zobrist = b.getZobrist();
-			zobrist ^= TTable.code(ply.from.y, ply.from.x, player);
-			if (!PlayerType.NONE.equals(b.getPlayerType(ply.to)))
-				zobrist ^= TTable
-						.code(ply.to.y, ply.to.x, player.getOpponent());
-			zobrist ^= TTable.code(ply.to.y, ply.to.x, player);
-			Entry entryPly = tTablePrevious.get(zobrist);
-			if (entryPly == null || !entryPly.getType().equals(EntryType.EXACT))
-				if (!PlayerType.NONE.equals(b.getPlayerType(ply.to))) {
-					// this is a capture move
-					sorted.addFirst(ply);
-				} else {
-					sorted.addLast(ply);
-				}
-			else if (entryPly.getValue() > 500) {
+			if (!PlayerType.NONE.equals(b.getPlayerType(ply.to))) {
+				// this is a capture move
 				sorted.addFirst(ply);
-			} else if (entryPly.getValue() > 0) {
-				sorted.add(sorted.size() / 3 + sorted.size() > 1 ? 1 : 0, ply);
 			} else {
 				sorted.addLast(ply);
 			}
 		}
-
 		return sorted;
 	}
 
@@ -279,7 +195,7 @@ public class AlphaBetaClient6 extends GameClient {
 
 	@Override
 	public String getClientDescription() {
-		return "AlphaBeta v6. Uses iterative Deepening, TT, TT-based Move Ordering, Save Forward Pruning, "
+		return "AlphaBeta v3. Uses iterative Deepening, TT, Move Ordering (capture first), "
 				+ evaluator.getClass().getSimpleName() + "";
 	}
 

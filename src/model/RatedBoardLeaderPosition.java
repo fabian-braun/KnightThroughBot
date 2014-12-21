@@ -2,11 +2,12 @@ package model;
 
 import java.util.Stack;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class RatedBoardLeaderPosition extends RatedBoardPieceCount {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -45262807273088644L;
 
 	private int downLeaderY = 1;

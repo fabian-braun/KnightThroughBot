@@ -20,6 +20,10 @@ import client.gui.MockClient;
 import config.Config;
 import error.GameException;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class GameEngine {
 
 	private Board initialBoard;

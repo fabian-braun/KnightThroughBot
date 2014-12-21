@@ -3,6 +3,10 @@ package evaluate;
 import model.Board;
 import model.PlayerType;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public interface EvaluationFunction {
 
 	// infinity

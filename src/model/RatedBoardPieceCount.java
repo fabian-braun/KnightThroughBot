@@ -1,10 +1,11 @@
 package model;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class RatedBoardPieceCount extends Board {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 232865211349908221L;
 	protected int upCount = 0;
 	protected int downCount = 0;

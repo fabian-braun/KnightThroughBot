@@ -9,6 +9,10 @@ import model.RestrictiveBoard;
 import client.GameClient;
 import error.GameException;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class GuiGameClient extends GameClient {
 
 	LinkedBlockingQueue<Ply> plyQueue;

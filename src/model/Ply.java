@@ -1,5 +1,12 @@
 package model;
 
+/**
+ * represents a ply / move by one player in the Game KnightThrough. Implements
+ * Comparable based on the assign evaluation value.
+ * 
+ * @author Fabian Braun
+ *
+ */
 public class Ply implements Comparable<Ply> {
 
 	public final Position from;

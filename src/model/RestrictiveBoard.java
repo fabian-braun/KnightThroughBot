@@ -4,11 +4,12 @@ import java.util.List;
 
 import error.GameException;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class RestrictiveBoard extends Board {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7348372821276241915L;
 
 	public RestrictiveBoard(Board copy) {

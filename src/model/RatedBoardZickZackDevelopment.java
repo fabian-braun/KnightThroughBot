@@ -1,10 +1,11 @@
 package model;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class RatedBoardZickZackDevelopment extends RatedBoardDevelopment {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1775925609879812881L;
 
 	public RatedBoardZickZackDevelopment(Board copy) {

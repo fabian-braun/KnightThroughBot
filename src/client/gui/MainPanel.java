@@ -32,6 +32,10 @@ import model.Ply;
 import model.Position;
 import model.RestrictiveBoard;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class MainPanel extends JPanel {
 
 	private static final long serialVersionUID = -7850204442114077596L;

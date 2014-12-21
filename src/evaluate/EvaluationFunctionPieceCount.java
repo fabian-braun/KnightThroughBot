@@ -4,6 +4,10 @@ import model.Board;
 import model.PlayerType;
 import model.RatedBoardPieceCount;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class EvaluationFunctionPieceCount implements EvaluationFunction {
 
 	@Override

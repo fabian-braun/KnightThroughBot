@@ -1,11 +1,11 @@
 package model;
 
-@SuppressWarnings("unused")
+/**
+ * @author Fabian Braun
+ *
+ */
 public class RatedBoardZickZack extends RatedBoardPieceCount {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1775925609879812881L;
 
 	public RatedBoardZickZack(Board copy) {
@@ -16,18 +16,15 @@ public class RatedBoardZickZack extends RatedBoardPieceCount {
 		int count = 0;
 		switch (p) {
 		case DOWN:
-			// count = max(getOccupiedZickZackCountDownLeft(),
-			// getOccupiedZickZackCountDownRight());
 			count = getOccupiedZickZackCountDownLeft();
 			break;
 		case UP:
-			// count = max(getOccupiedZickZackCountUpLeft(),
-			// getOccupiedZickZackCountUpRight());
 			count = getOccupiedZickZackCountUpRight();
 			break;
 		default:
 			assert false : "Unexpected case in Evaluation function";
 		}
+		// if zickzack structure is completed this is overproportionally better
 		if (count == 4)
 			count = 8;
 		return count;
@@ -46,32 +43,6 @@ public class RatedBoardZickZack extends RatedBoardPieceCount {
 		return count;
 	}
 
-	private int getOccupiedZickZackCountDownRight() {
-		int count = 0;
-		if (board[3][4].equals(PlayerType.DOWN))
-			count++;
-		if (board[2][5].equals(PlayerType.DOWN))
-			count++;
-		if (board[3][6].equals(PlayerType.DOWN))
-			count++;
-		if (board[2][7].equals(PlayerType.DOWN))
-			count++;
-		return count;
-	}
-
-	private int getOccupiedZickZackCountUpLeft() {
-		int count = 0;
-		if (board[5][0].equals(PlayerType.UP))
-			count++;
-		if (board[4][1].equals(PlayerType.UP))
-			count++;
-		if (board[5][2].equals(PlayerType.UP))
-			count++;
-		if (board[4][3].equals(PlayerType.UP))
-			count++;
-		return count;
-	}
-
 	private int getOccupiedZickZackCountUpRight() {
 		int count = 0;
 		if (board[4][4].equals(PlayerType.UP))
@@ -85,7 +56,4 @@ public class RatedBoardZickZack extends RatedBoardPieceCount {
 		return count;
 	}
 
-	private int max(int i1, int i2) {
-		return i1 > i2 ? i1 : i2;
-	}
 }

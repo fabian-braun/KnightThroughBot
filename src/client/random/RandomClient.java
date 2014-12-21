@@ -8,6 +8,10 @@ import model.PlayerType;
 import model.Ply;
 import client.GameClient;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class RandomClient extends GameClient {
 	Random randall = new Random();
 

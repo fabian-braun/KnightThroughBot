@@ -1,4 +1,4 @@
-package client.alphabeta.standard;
+package client.alphabeta;
 
 import java.util.List;
 import java.util.Random;
@@ -10,18 +10,15 @@ import client.GameClient;
 import evaluate.EvaluationFunction;
 
 /**
- * The first wonderfully working alphabeta client. It's just plain old NegaMax
- * without any additional sugar.
- * 
- * @author Fabian
+ * @author Fabian Braun
  *
  */
-public class AlphaBetaClient extends GameClient {
+public class AlphaBetaClient1 extends GameClient {
 	public static final int depth = 5;
 
 	Random r = new Random();
 
-	public AlphaBetaClient(Board initialBoard, PlayerType player) {
+	public AlphaBetaClient1(Board initialBoard, PlayerType player) {
 		super(initialBoard, player);
 	}
 

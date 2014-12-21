@@ -2,17 +2,21 @@ package client;
 
 import model.Board;
 import model.PlayerType;
-import client.alphabeta.standard.AlphaBetaClient;
-import client.alphabeta.v3.AlphaBetaClient3;
-import client.alphabeta.v4.AlphaBetaClient4;
-import client.alphabeta.v5.AlphaBetaClient5;
-import client.alphabeta.v6.AlphaBetaClient6;
-import client.alphabeta.v7.AlphaBetaClient7;
+import client.alphabeta.AlphaBetaClient1;
+import client.alphabeta.AlphaBetaClient3;
+import client.alphabeta.AlphaBetaClient4;
+import client.alphabeta.AlphaBetaClient5;
+import client.alphabeta.AlphaBetaClient6;
+import client.alphabeta.AlphaBetaClient7;
 import client.greedy.GreedyGameClient;
 import client.gui.GuiGameClient;
 import client.random.RandomClient;
 import config.Config;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class GameClientFactory {
 
 	public static GameClient[] getClients(Board initialBoard) {
@@ -42,10 +46,10 @@ public class GameClientFactory {
 		if (Config.valClientTypeGui.equals(clientType)) {
 			return gui;
 		} else {
-			if (Config.valClientTypeAlphabetaStd.equals(clientType)) {
-				return new AlphaBetaClient(initialBoard, player);
-			} else if (Config.valClientTypeAlphabetaFast.equals(clientType)) {
-				return new client.alphabeta.fast.AlphaBetaClientFast(
+			if (Config.valClientTypeAlphabeta1.equals(clientType)) {
+				return new AlphaBetaClient1(initialBoard, player);
+			} else if (Config.valClientTypeAlphabeta2.equals(clientType)) {
+				return new client.alphabeta.AlphaBetaClient2(
 						initialBoard, player);
 			} else if (Config.valClientTypeGreedy.equals(clientType)) {
 				return new GreedyGameClient(initialBoard, player);

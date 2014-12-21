@@ -2,11 +2,12 @@ package model;
 
 import java.util.List;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class RatedBoardPieceCountAdvanced extends RatedBoardPieceCount {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3217965840720872609L;
 
 	public RatedBoardPieceCountAdvanced(Board copy) {

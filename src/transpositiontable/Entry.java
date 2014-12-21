@@ -1,5 +1,11 @@
 package transpositiontable;
 
+/**
+ * represents an Entry in a transposition table. equals and hashCode are
+ * implemented explicitly.
+ * 
+ * @author Fabian Braun
+ */
 public class Entry {
 	private int value;
 	private EntryType type;
@@ -12,14 +18,23 @@ public class Entry {
 		this.depth = depth;
 	}
 
+	/**
+	 * @return evaluation value, upper or lower boundary of this entry
+	 */
 	public int getValue() {
 		return value;
 	}
 
+	/**
+	 * @return {@link EntryType} of this entry
+	 */
 	public EntryType getType() {
 		return type;
 	}
 
+	/**
+	 * @return depth of this entry
+	 */
 	public int getDepth() {
 		return depth;
 	}

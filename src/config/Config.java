@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class Config {
 
 	private static final String CONFIG_FILE_BIN = ClassLoader
@@ -24,8 +28,8 @@ public class Config {
 	public static final String valClientTypeGui = "GUI";
 	public static final String valClientTypeRandom = "RANDOM";
 	public static final String valClientTypeGreedy = "GREEDY";
-	public static final String valClientTypeAlphabetaStd = "ALPHABETA_STANDARD";
-	public static final String valClientTypeAlphabetaFast = "ALPHABETA_FAST";
+	public static final String valClientTypeAlphabeta1 = "ALPHABETA_1";
+	public static final String valClientTypeAlphabeta2 = "ALPHABETA_2";
 	public static final String valClientTypeAlphabeta3 = "ALPHABETA_3";
 	public static final String valClientTypeAlphabeta4 = "ALPHABETA_4";
 	public static final String valClientTypeAlphabeta5 = "ALPHABETA_5";
@@ -37,7 +41,7 @@ public class Config {
 	public static final String valEvaluationFunctionDevelopment = "DEVELOPMENT";
 	public static final String valEvaluationFunctionLeaderPosition = "LEADER_POS";
 	public static final String valEvaluationFunctionPieceCount = "PIECE_COUNT";
-	public static final String valEvaluationFunctionPieceCountAdvanced = "STRUCTURE";
+	public static final String valEvaluationFunctionStructure = "STRUCTURE";
 	public static final String valEvaluationFunctionZickZack = "ZICKZACK";
 	public static final String valEvaluationFunctionZickZackDevelopment = "ZICKZACKDEVELOPMENT";
 

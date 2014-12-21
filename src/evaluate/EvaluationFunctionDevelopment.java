@@ -4,6 +4,10 @@ import model.Board;
 import model.PlayerType;
 import model.RatedBoardDevelopment;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class EvaluationFunctionDevelopment implements EvaluationFunction {
 
 	@Override

@@ -2,6 +2,10 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public enum PlayerType implements Serializable {
 
 	NONE, DOWN, UP;
@@ -14,6 +18,13 @@ public enum PlayerType implements Serializable {
 		UP.opponent = DOWN;
 	}
 
+	/**
+	 * NONE.getOpponent() == NONE,<br\>
+	 * DOWN.getOpponent() == UP,<br\>
+	 * UP.getOpponent() == DOWN<br\>
+	 * 
+	 * @return
+	 */
 	public PlayerType getOpponent() {
 		return opponent;
 	}

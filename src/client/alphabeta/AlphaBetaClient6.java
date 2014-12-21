@@ -1,4 +1,4 @@
-package client.alphabeta.v7;
+package client.alphabeta;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,16 +19,15 @@ import model.Ply;
 import model.Position;
 import transpositiontable.Entry;
 import transpositiontable.EntryType;
-import transpositiontable.TTable;
+import transpositiontable.Zobrist;
 import client.GameClient;
 import evaluate.EvaluationFunction;
 
 /**
- * 
- * @author Fabian
+ * @author Fabian Braun
  *
  */
-public class AlphaBetaClient7 extends GameClient {
+public class AlphaBetaClient6 extends GameClient {
 
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -50,7 +49,7 @@ public class AlphaBetaClient7 extends GameClient {
 
 	private long remaining = 1;
 
-	public AlphaBetaClient7(Board initialBoard, PlayerType player) {
+	public AlphaBetaClient6(Board initialBoard, PlayerType player) {
 		super(initialBoard, player);
 	}
 
@@ -192,13 +191,7 @@ public class AlphaBetaClient7 extends GameClient {
 				nodeCount++;
 				return -EvaluationFunction.infty - depth;
 			}
-		}
-		if ((plies == null)
-				&& b.getCountFor(p) < b.getCountFor(p.getOpponent())) {
-			// opponent has piece advantage, only evaluate capture moves
-			plies = b.getCapturePlies(p);
-		}
-		if (plies == null || plies.isEmpty()) {
+		} else {
 			plies = b.getPossiblePlies(p);
 		}
 		// move ordering
@@ -252,11 +245,11 @@ public class AlphaBetaClient7 extends GameClient {
 		LinkedList<Ply> sorted = new LinkedList<Ply>();
 		for (Ply ply : plies) {
 			long zobrist = b.getZobrist();
-			zobrist ^= TTable.code(ply.from.y, ply.from.x, player);
+			zobrist ^= Zobrist.code(ply.from.y, ply.from.x, player);
 			if (!PlayerType.NONE.equals(b.getPlayerType(ply.to)))
-				zobrist ^= TTable
-						.code(ply.to.y, ply.to.x, player.getOpponent());
-			zobrist ^= TTable.code(ply.to.y, ply.to.x, player);
+				zobrist ^= Zobrist.code(ply.to.y, ply.to.x,
+						player.getOpponent());
+			zobrist ^= Zobrist.code(ply.to.y, ply.to.x, player);
 			Entry entryPly = tTablePrevious.get(zobrist);
 			if (entryPly == null || !entryPly.getType().equals(EntryType.EXACT))
 				if (!PlayerType.NONE.equals(b.getPlayerType(ply.to))) {
@@ -285,9 +278,8 @@ public class AlphaBetaClient7 extends GameClient {
 
 	@Override
 	public String getClientDescription() {
-		return "AlphaBeta v7. Uses iterative Deepening, TT, TT-based Move Ordering, Greedy Forward Pruning, "
-				+ evaluator.getClass().getSimpleName()
-				+ " - this is outperformed by AlphaBeta6 in the end game";
+		return "AlphaBeta v6. Uses iterative Deepening, TT, TT-based Move Ordering, Save Forward Pruning, "
+				+ evaluator.getClass().getSimpleName() + "";
 	}
 
 }

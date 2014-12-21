@@ -3,6 +3,10 @@ package evaluate;
 import config.Config;
 import error.GameException;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class EvaluationFunctionFactory {
 
 	public static EvaluationFunction mapStringToEval(String functionType) {
@@ -13,7 +17,7 @@ public class EvaluationFunctionFactory {
 			return new EvaluationFunctionLeaderPosition();
 		} else if (Config.valEvaluationFunctionPieceCount.equals(functionType)) {
 			return new EvaluationFunctionPieceCount();
-		} else if (Config.valEvaluationFunctionPieceCountAdvanced
+		} else if (Config.valEvaluationFunctionStructure
 				.equals(functionType)) {
 			return new EvaluationFunctionPieceCountAdvanced();
 		} else if (Config.valEvaluationFunctionZickZack.equals(functionType)) {

@@ -1,4 +1,4 @@
-package client.alphabeta.v4;
+package client.alphabeta;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,21 +19,22 @@ import model.Ply;
 import model.Position;
 import transpositiontable.Entry;
 import transpositiontable.EntryType;
+import transpositiontable.Zobrist;
 import client.GameClient;
-import client.alphabeta.v5.AlphaBetaClient5;
 import evaluate.EvaluationFunction;
 
 /**
- * 
- * @author Fabian
+ * @author Fabian Braun
  *
  */
-public class AlphaBetaClient4 extends GameClient {
+public class AlphaBetaClient5 extends GameClient {
 
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	private Map<Long, Entry> tTable = new HashMap<Long, Entry>(
-			AlphaBetaClient5.TT_SIZE);
+	public static final int TT_SIZE = 10000000;
+
+	private Map<Long, Entry> tTable = new HashMap<Long, Entry>(TT_SIZE);
+	private Map<Long, Entry> tTablePrevious = new HashMap<Long, Entry>(TT_SIZE);
 
 	Random random = new Random();
 
@@ -48,7 +49,7 @@ public class AlphaBetaClient4 extends GameClient {
 
 	private long remaining = 1;
 
-	public AlphaBetaClient4(Board initialBoard, PlayerType player) {
+	public AlphaBetaClient5(Board initialBoard, PlayerType player) {
 		super(initialBoard, player);
 	}
 
@@ -105,7 +106,8 @@ public class AlphaBetaClient4 extends GameClient {
 
 	private Ply alphabeta(Board board, PlayerType forPlayer, int depth) {
 		nodeCount = 0;
-		tTable.clear();
+		tTablePrevious = tTable;
+		tTable = new HashMap<Long, Entry>(TT_SIZE);
 		List<Ply> plies;
 		Position threateningPieceAt = board.getThreateningPiece(forPlayer
 				.getOpponent());
@@ -224,16 +226,33 @@ public class AlphaBetaClient4 extends GameClient {
 	 * @param player
 	 * @return new sorted List
 	 */
-	private List<Ply> sortPlies(List<Ply> plies, Board b, PlayerType player) {
+	private List<Ply> sortPlies(List<Ply> plies, final Board b,
+			PlayerType player) {
 		LinkedList<Ply> sorted = new LinkedList<Ply>();
 		for (Ply ply : plies) {
-			if (!PlayerType.NONE.equals(b.getPlayerType(ply.to))) {
-				// this is a capture move
+			long zobrist = b.getZobrist();
+			zobrist ^= Zobrist.code(ply.from.y, ply.from.x, player);
+			if (!PlayerType.NONE.equals(b.getPlayerType(ply.to)))
+				zobrist ^= Zobrist.code(ply.to.y, ply.to.x,
+						player.getOpponent());
+			zobrist ^= Zobrist.code(ply.to.y, ply.to.x, player);
+			Entry entryPly = tTablePrevious.get(zobrist);
+			if (entryPly == null || !entryPly.getType().equals(EntryType.EXACT))
+				if (!PlayerType.NONE.equals(b.getPlayerType(ply.to))) {
+					// this is a capture move
+					sorted.addFirst(ply);
+				} else {
+					sorted.addLast(ply);
+				}
+			else if (entryPly.getValue() > 500) {
 				sorted.addFirst(ply);
+			} else if (entryPly.getValue() > 0) {
+				sorted.add(sorted.size() / 3 + sorted.size() > 1 ? 1 : 0, ply);
 			} else {
 				sorted.addLast(ply);
 			}
 		}
+
 		return sorted;
 	}
 
@@ -245,7 +264,7 @@ public class AlphaBetaClient4 extends GameClient {
 
 	@Override
 	public String getClientDescription() {
-		return "AlphaBeta v4. Uses iterative Deepening, TT, Move Ordering, Threatening Move Detection, "
+		return "AlphaBeta v5. Uses iterative Deepening, TT, TT-based Move Ordering, Threatening Move Detection, "
 				+ evaluator.getClass().getSimpleName() + "";
 	}
 

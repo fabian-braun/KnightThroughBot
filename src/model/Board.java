@@ -9,13 +9,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import transpositiontable.TTable;
+import transpositiontable.Zobrist;
 
+/**
+ * Basic representation of a KnightThrough board. Allows illegal moves.
+ * Optimized to produce high performance.
+ * 
+ * @author Fabian Braun
+ *
+ */
 public class Board implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8288026676803633407L;
 	protected PlayerType[][] board;
 	protected final int ySize;
@@ -25,6 +29,7 @@ public class Board implements Serializable {
 	private static HashMap<Position, List<Position>> legalTargetsUp;
 
 	static {
+		// static initialization of legal targets to increase performance
 		legalTargetsDown = new HashMap<Position, List<Position>>();
 		legalTargetsUp = new HashMap<Position, List<Position>>();
 		for (int y = 0; y < 8; y++) {
@@ -36,9 +41,19 @@ public class Board implements Serializable {
 			}
 		}
 	}
-	static {
-	}
 
+	/**
+	 * returns all positions that can be reached by a piece directly. Does not
+	 * take into account other pieces on the board. For faster access use
+	 * lookupLegalPositions.
+	 * 
+	 * @param y
+	 * @param x
+	 * @param ySize
+	 * @param xSize
+	 * @param player
+	 * @return
+	 */
 	private static List<Position> getLegalPositions(int y, int x, int ySize,
 			int xSize, PlayerType player) {
 		List<Position> positions = getAdjacentPositions(y, x, player);
@@ -68,6 +83,17 @@ public class Board implements Serializable {
 		return positions;
 	}
 
+	/**
+	 * returns all positions that can be reached by a piece directly. Does not
+	 * take into account other pieces on the board.
+	 * 
+	 * @param y
+	 * @param x
+	 * @param ySize
+	 * @param xSize
+	 * @param player
+	 * @return
+	 */
 	public static List<Position> lookupLegalPositions(Position from,
 			PlayerType forPlayer) {
 		// return a copy, as the returned List must never be changed!
@@ -79,6 +105,27 @@ public class Board implements Serializable {
 		default:
 			return new ArrayList<Position>();
 		}
+	}
+
+	/**
+	 * returns all legal positions for a player's piece which are not occupied
+	 * by this player.
+	 * 
+	 * @param y
+	 * @param x
+	 * @param forPlayer
+	 * @return
+	 */
+	protected List<Position> getLegalUnoccupiedPositions(int y, int x,
+			PlayerType forPlayer) {
+		List<Position> positions = lookupLegalPositions(new Position(y, x),
+				forPlayer);
+		for (int i = positions.size() - 1; i >= 0; i--) {
+			if (board[positions.get(i).y][positions.get(i).x] == forPlayer) {
+				positions.remove(i);
+			}
+		}
+		return positions;
 	}
 
 	/**
@@ -98,6 +145,14 @@ public class Board implements Serializable {
 		}
 	}
 
+	/**
+	 * See {@link BoardFactory} for initialization of {@link Board}. This
+	 * Constructor creates an 8x8 board with a single piece for each player in
+	 * the corner of the board.
+	 * 
+	 * @param ySize
+	 * @param xSize
+	 */
 	public Board(int ySize, int xSize) {
 		this.ySize = ySize;
 		this.xSize = xSize;
@@ -109,14 +164,29 @@ public class Board implements Serializable {
 		set(ySize - 1, xSize - 1, PlayerType.UP);
 	}
 
+	/**
+	 * sets a position on the {@link Board} to the specified {@link PlayerType}.
+	 * The zobrist hash of this {@link Board} is updated accordingly. Never
+	 * directly modify the internal board array as the zobrist hash is getting
+	 * incorrect in this case.
+	 * 
+	 * @param y
+	 * @param x
+	 * @param type
+	 */
 	public void set(int y, int x, PlayerType type) {
 		if (!PlayerType.NONE.equals(board[y][x]))
-			zobristHash = zobristHash ^ TTable.code(y, x, board[y][x]);
+			zobristHash = zobristHash ^ Zobrist.code(y, x, board[y][x]);
 		board[y][x] = type;
 		if (!type.equals(PlayerType.NONE))
-			zobristHash = zobristHash ^ TTable.code(y, x, type);
+			zobristHash = zobristHash ^ Zobrist.code(y, x, type);
 	}
 
+	/**
+	 * @param forPlayer
+	 * @return all possible plies that a player can perform in the current
+	 *         position
+	 */
 	public List<Ply> getPossiblePlies(PlayerType forPlayer) {
 		List<Ply> possiblePlies = new ArrayList<Ply>();
 		for (int y = 0; y < ySize; y++) {
@@ -134,14 +204,34 @@ public class Board implements Serializable {
 		return possiblePlies;
 	}
 
+	/**
+	 * @param at
+	 * @return
+	 * @throws IndexOutOfBoundsException
+	 *             if y or x is not in range
+	 */
 	public final PlayerType getPlayerType(Position at) {
 		return getPlayerType(at.y, at.x);
 	}
 
+	/**
+	 * @param y
+	 * @param x
+	 * @return
+	 * @throws IndexOutOfBoundsException
+	 *             if y or x is not in range
+	 */
 	public final PlayerType getPlayerType(int y, int x) {
 		return board[y][x];
 	}
 
+	/**
+	 * if y or x are out of range, {@link PlayerType} NONE is returned.
+	 * 
+	 * @param y
+	 * @param x
+	 * @return
+	 */
 	public final PlayerType getPlayerTypeSave(int y, int x) {
 		if (y >= ySize || y < 0 || x >= xSize || x < 0) {
 			return PlayerType.NONE;
@@ -149,6 +239,12 @@ public class Board implements Serializable {
 		return board[y][x];
 	}
 
+	/**
+	 * @param forPlayer
+	 * @param from
+	 * @return all possible plies that a player can perform in the current
+	 *         position with a specific piece.
+	 */
 	public List<Ply> getPossiblePlies(PlayerType forPlayer, Position from) {
 		if (!getPlayerType(from).equals(forPlayer)) {
 			return new ArrayList<Ply>();
@@ -162,6 +258,12 @@ public class Board implements Serializable {
 		return possiblePlies;
 	}
 
+	/**
+	 * @param forPlayer
+	 * @param target
+	 * @return all possible plies that a player can perform in the current
+	 *         position to a specific target.
+	 */
 	public List<Ply> getPossiblePliesTo(PlayerType forPlayer, Position target) {
 		// legal origins are legal target from opponents view
 		List<Position> legalOrigins = lookupLegalPositions(target,
@@ -172,18 +274,6 @@ public class Board implements Serializable {
 				possiblePlies.add(new Ply(from, target));
 		}
 		return possiblePlies;
-	}
-
-	protected List<Position> getLegalUnoccupiedPositions(int y, int x,
-			PlayerType forPlayer) {
-		List<Position> positions = lookupLegalPositions(new Position(y, x),
-				forPlayer);
-		for (int i = positions.size() - 1; i >= 0; i--) {
-			if (board[positions.get(i).y][positions.get(i).x] == forPlayer) {
-				positions.remove(i);
-			}
-		}
-		return positions;
 	}
 
 	@Override
@@ -221,6 +311,13 @@ public class Board implements Serializable {
 		return sb.toString();
 	}
 
+	/**
+	 * performs the ply on the Board. Does not check for consistency. If it is a
+	 * capture ply the captured piece is returned.
+	 * 
+	 * @param ply
+	 * @return
+	 */
 	public PlayerType perform(Ply ply) {
 		PlayerType movingPiece = board[ply.from.y][ply.from.x];
 		PlayerType capturedPiece = board[ply.to.y][ply.to.x];
@@ -231,6 +328,14 @@ public class Board implements Serializable {
 		return capturedPiece;
 	}
 
+	/**
+	 * Undoes the ply on the Board. Does not check for consistency. If the ply
+	 * to undo was a capture-ply, the piece which had been captured must be
+	 * handed over to this method.
+	 * 
+	 * @param ply
+	 * @return
+	 */
 	public void undo(Ply ply, PlayerType recoverCapturedPiece) {
 		// set origin position
 		set(ply.from.y, ply.from.x, board[ply.to.y][ply.to.x]);
@@ -276,6 +381,13 @@ public class Board implements Serializable {
 		return count;
 	}
 
+	/**
+	 * returns the first piece encountered, which can win in one move for the
+	 * specified player.
+	 * 
+	 * @param player
+	 * @return
+	 */
 	public Position getThreateningPiece(PlayerType player) {
 		int yStart;
 		if (player.equals(PlayerType.UP))
@@ -293,7 +405,14 @@ public class Board implements Serializable {
 		return null;
 	}
 
-	public Position getPieceInMyHalf(PlayerType player) {
+	/**
+	 * returns the first piece encountered of this player, which is located in
+	 * the opponent's half.
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public Position getPieceInOppHalf(PlayerType player) {
 		int yStart;
 		if (player.equals(PlayerType.UP))
 			yStart = 1;
@@ -310,6 +429,11 @@ public class Board implements Serializable {
 		return null;
 	}
 
+	/**
+	 * @param player
+	 * @return all plies for the specified player which capture a piece of the
+	 *         opponent.
+	 */
 	public List<Ply> getCapturePlies(PlayerType player) {
 		List<Ply> allPlies = getPossiblePlies(player);
 		List<Ply> capturePlies = new LinkedList<Ply>();
@@ -321,6 +445,9 @@ public class Board implements Serializable {
 		return capturePlies;
 	}
 
+	/**
+	 * @return zobrist hash of the current board position
+	 */
 	public long getZobrist() {
 		return zobristHash;
 	}
@@ -339,6 +466,11 @@ public class Board implements Serializable {
 		return true;
 	}
 
+	/**
+	 * @param other
+	 * @return all positions which have a different {@link PlayerType} on this
+	 *         and the other {@link Board}
+	 */
 	public Set<Position> findDifferencesTo(Board other) {
 		if (other == null) {
 			return new HashSet<Position>();

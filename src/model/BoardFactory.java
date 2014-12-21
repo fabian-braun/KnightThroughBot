@@ -2,6 +2,10 @@ package model;
 
 import error.GameException;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class BoardFactory {
 
 	public static Board createStandardBoard() {

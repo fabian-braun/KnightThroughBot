@@ -10,11 +10,12 @@ import java.util.Scanner;
 
 import error.GameException;
 
+/**
+ * @author Fabian Braun
+ *
+ */
 public class SavedGame implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4710967260446983107L;
 	private Board board;
 	private PlayerType playerToMove;
