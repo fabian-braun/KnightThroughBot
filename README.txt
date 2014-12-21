@@ -14,8 +14,8 @@ It contains the following folder structure:
 	\- save (directory for saved games, empty initially)
 	\- resources (directory for configuration file and graphics)
 		\- config.properties (configuration for the program)
-		\- frog-icon_blue.png (image representing the player playing upwards)
-		\- frog-icon_green.png (image representing the player playing downwards)
+		\- icon_up.png (image representing the player playing upwards)
+		\- icon_down.png (image representing the player playing downwards)
 
 ## CONFIGURATION and START ##
 

@@ -55,8 +55,8 @@ public class MainPanel extends JPanel {
 	public static final Color changedColor = new Color(255, 140, 0);
 
 	private JButton[][] tiles;
-	private Image greenFrog;
-	private Image blueFrog;
+	private Image downImg;
+	private Image upImg;
 	private JPanel boardPanel;
 	private boolean enabled = false;
 	private boolean tileSelected = false;
@@ -178,10 +178,10 @@ public class MainPanel extends JPanel {
 					tiles[y][x].setIcon(null);
 					break;
 				case DOWN:
-					tiles[y][x].setIcon(new ImageIcon(greenFrog));
+					tiles[y][x].setIcon(new ImageIcon(downImg));
 					break;
 				case UP:
-					tiles[y][x].setIcon(new ImageIcon(blueFrog));
+					tiles[y][x].setIcon(new ImageIcon(upImg));
 					break;
 				default:
 					break;
@@ -219,10 +219,10 @@ public class MainPanel extends JPanel {
 
 				switch (board.getPlayerType(selectedPosition)) {
 				case DOWN:
-					tiles[p.y][p.x].setIcon(new ImageIcon(greenFrog));
+					tiles[p.y][p.x].setIcon(new ImageIcon(downImg));
 					break;
 				case UP:
-					tiles[p.y][p.x].setIcon(new ImageIcon(blueFrog));
+					tiles[p.y][p.x].setIcon(new ImageIcon(upImg));
 					break;
 				default:
 					break;
@@ -270,10 +270,10 @@ public class MainPanel extends JPanel {
 
 	private void loadGraphics() {
 		try {
-			File f = new File("resources/frog-icon_green.png");
-			greenFrog = ImageIO.read(f);
-			f = new File("resources/frog-icon_blue.png");
-			blueFrog = ImageIO.read(f);
+			File f = new File("resources/icon_down.png");
+			downImg = ImageIO.read(f);
+			f = new File("resources/icon_up.png");
+			upImg = ImageIO.read(f);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);

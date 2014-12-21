@@ -59,6 +59,7 @@ public class AlphaBetaClient6 extends GameClient {
 		long timeToFinish = System.currentTimeMillis() + duration;
 		final Board boardF = evaluator.convertBoard(board);
 		Ply bestPly = alphabeta(boardF, forPlayer, 1);
+		// iterative deepening
 		for (int depth = startDepth; depth < 15; depth++) {
 			if (bestPly.getEvaluationValue() > EvaluationFunction.infty - 50) {
 				// bestPly is winning move
@@ -66,6 +67,7 @@ public class AlphaBetaClient6 extends GameClient {
 				System.out.println("winning move found: " + bestPly);
 				break;
 			}
+			// check if enough time for next iteration
 			long lastRemaining = remaining;
 			remaining = timeToFinish - System.currentTimeMillis();
 			prepreDuration = preDuration;
@@ -104,6 +106,15 @@ public class AlphaBetaClient6 extends GameClient {
 		return bestPly;
 	}
 
+	/**
+	 * entry method for alpha-beta-tree-search. Search the best move for the
+	 * given player in the given depth.
+	 * 
+	 * @param board
+	 * @param forPlayer
+	 * @param depth
+	 * @return
+	 */
 	private Ply alphabeta(Board board, PlayerType forPlayer, int depth) {
 		nodeCount = 0;
 		tTablePrevious = tTable;
@@ -112,6 +123,7 @@ public class AlphaBetaClient6 extends GameClient {
 		Position threateningPieceAt = board.getThreateningPiece(forPlayer
 				.getOpponent());
 		if (threateningPieceAt != null) {
+			// opponent is one ply from winning
 			List<Ply> capturePlies = board.getPossiblePliesTo(forPlayer,
 					threateningPieceAt);
 			if (capturePlies.size() == 1) {
@@ -127,8 +139,9 @@ public class AlphaBetaClient6 extends GameClient {
 				// could also do random move here
 				plies = board.getPossiblePlies(forPlayer);
 			}
-		} else {
+		} else { // no threatening piece
 			plies = board.getPossiblePlies(forPlayer);
+			// move ordering
 			plies = sortPlies(plies, board, forPlayer);
 		}
 		int bestrating = -EvaluationFunction.infty;
@@ -143,7 +156,7 @@ public class AlphaBetaClient6 extends GameClient {
 				bestPly = ply;
 				bestrating = rating;
 			} else if (rating == bestrating && random.nextBoolean()) {
-				// random behavior
+				// random.nextBoolean() adds a slight random behavior
 				bestPly = ply;
 			}
 		}
@@ -153,9 +166,22 @@ public class AlphaBetaClient6 extends GameClient {
 		return bestPly;
 	}
 
+	/**
+	 * recursive alpha-beta-tree-search method. Implemented as NegaMax.
+	 * 
+	 * @param b
+	 * @param depth
+	 * @param alpha
+	 * @param beta
+	 * @param p
+	 * @return
+	 */
 	private int alphabetaRec(Board b, int depth, int alpha, int beta,
 			PlayerType p) {
 		if (Thread.currentThread().isInterrupted()) {
+			// return a positive value here to avoid Threading-side-effects.
+			// In the root of the recursion this will be negated, and
+			// subsequently treated as a very bad move.
 			return EvaluationFunction.infty + 15;
 		}
 		int alphaOrig = alpha;
@@ -215,7 +241,7 @@ public class AlphaBetaClient6 extends GameClient {
 				break; // prune
 			}
 		}
-		// Replacement scheme: Deep-New
+		// transposition table replacement scheme: Deep-New
 		if (saved == null || depth >= saved.getDepth()) {
 			Entry tTableEntry;
 			if (bestValue <= alphaOrig) {
@@ -232,8 +258,8 @@ public class AlphaBetaClient6 extends GameClient {
 	}
 
 	/**
-	 * puts all plies in a new list. Capture-plies are put in the beginning and
-	 * others in the end.
+	 * puts all plies in a new list. Good plies are placed in the beginning and
+	 * others behind. Runs in O(n).
 	 * 
 	 * @param plies
 	 * @param b
