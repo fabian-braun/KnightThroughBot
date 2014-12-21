@@ -213,7 +213,7 @@ public class MainPanel extends JPanel {
 				highlightTiles(possibleTargetPositions);
 				highlightTiles(p); // the current pos should also be highlighted
 			}
-		} else { // moving frog is already selected
+		} else { // moving piece is already selected
 			if (possibleTargetPositions.contains(p)) {
 				enabled = false; // other player moves next
 
@@ -235,7 +235,7 @@ public class MainPanel extends JPanel {
 				plyContainer.add(performed);
 			} else {
 				// not a valid target
-				// reset selected frog
+				// reset selected piece
 				resetTiles();
 			}
 		}

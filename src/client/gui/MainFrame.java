@@ -24,7 +24,7 @@ public class MainFrame extends JFrame {
 
 	public MainFrame(RestrictiveBoard initialBoard,
 			LinkedBlockingQueue<Ply> plyContainer) {
-		super("FrogThrough");
+		super("KnightThrough");
 		mainPanel = new MainPanel(initialBoard, plyContainer);
 		add(mainPanel);
 		// Ensures JVM closes after frame(s) closed and

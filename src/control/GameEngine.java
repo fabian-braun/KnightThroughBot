@@ -182,7 +182,7 @@ public class GameEngine {
 	}
 
 	private void saveGame(Board board, PlayerType playerToMove, int turnIndex) {
-		String filename = "save/frogThrough-";
+		String filename = "save/knightThrough-";
 		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd-hh-mm-ss");
 		filename += sdf.format(startTime);
 		filename += "-turn-" + String.format("%02d", turnIndex);
