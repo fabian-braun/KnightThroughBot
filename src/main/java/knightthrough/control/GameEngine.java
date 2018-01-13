@@ -7,18 +7,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import knightthrough.model.Board;
-import knightthrough.model.BoardFactory;
-import knightthrough.model.PlayerType;
-import knightthrough.model.Ply;
-import knightthrough.model.RestrictiveBoard;
-import knightthrough.model.SavedGame;
 import knightthrough.client.GameClient;
 import knightthrough.client.GameClientFactory;
 import knightthrough.client.gui.GuiGameClient;
 import knightthrough.client.gui.MockClient;
 import knightthrough.config.Config;
 import knightthrough.error.GameException;
+import knightthrough.model.Board;
+import knightthrough.model.BoardFactory;
+import knightthrough.model.PlayerType;
+import knightthrough.model.Ply;
+import knightthrough.model.RestrictiveBoard;
+import knightthrough.model.SavedGame;
 
 /**
  * @author Fabian Braun
@@ -182,7 +182,7 @@ public class GameEngine {
 	}
 
 	private void saveGame(Board board, PlayerType playerToMove, int turnIndex) {
-		String filename = "save/knightThrough-";
+		String filename = "knightThrough-";
 		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd-hh-mm-ss");
 		filename += sdf.format(startTime);
 		filename += "-turn-" + String.format("%02d", turnIndex);

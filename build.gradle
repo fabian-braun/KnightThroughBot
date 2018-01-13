@@ -1,5 +1,5 @@
+apply plugin: 'eclipse'
 apply plugin: 'java'
-
 apply plugin: 'application'
 
 repositories {
@@ -9,10 +9,21 @@ repositories {
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     // compile 'com.google.guava:guava:23.0'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
     testCompile 'junit:junit:4.12'
 }
 
 // Define the main class for the application
-mainClassName = 'control.Main'
+mainClassName = 'knightthrough.control.Main'
 
+// set user.dir to the APP_HOME directory so that the config directory can be located
+CreateStartScripts startScripts = project.startScripts
+startScripts.with {
+    doLast {
+        unixScript.text = unixScript.text.replace('eval set -- $DEFAULT_JVM_OPTS',
+                 'eval set -- -Duser.dir=$APP_HOME $DEFAULT_JVM_OPTS')
+        windowsScript.text = windowsScript.text.replace('"%JAVA_EXE%" %DEFAULT_JVM_OPTS%',
+                '"%JAVA_EXE%" -Duser.dir=%APP_HOME% %DEFAULT_JVM_OPTS%')
+    }
+}

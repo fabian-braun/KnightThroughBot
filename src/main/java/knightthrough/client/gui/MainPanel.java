@@ -11,7 +11,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +27,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import knightthrough.error.GameException;
 import knightthrough.model.PlayerType;
 import knightthrough.model.Ply;
 import knightthrough.model.Position;
@@ -269,14 +270,15 @@ public class MainPanel extends JPanel {
 	}
 
 	private void loadGraphics() {
-		try {
-			File f = new File("resources/icon_down.png");
-			downImg = ImageIO.read(f);
-			f = new File("resources/icon_up.png");
-			upImg = ImageIO.read(f);
+		try (InputStream is= Thread.currentThread().getContextClassLoader().getResourceAsStream("icon_down.png")) {
+			downImg = ImageIO.read(is);
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
+			throw new GameException("Could not load player icons", e);
+		}
+		try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("icon_up.png")) {
+			upImg = ImageIO.read(is);
+		} catch (Exception e) {
+			throw new GameException("Could not load player icons", e);
 		}
 	}
 

@@ -1,10 +1,12 @@
 package knightthrough.config;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import knightthrough.error.GameException;
 
 /**
  * @author Fabian Braun
@@ -12,10 +14,6 @@ import java.util.Properties;
  */
 public class Config {
 
-	private static final String CONFIG_FILE_BIN = ClassLoader
-			.getSystemClassLoader().getResource(".").getPath()
-			+ "config.properties";
-	private static final String CONFIG_FILE_PRJ = "resources/config.properties";
 	public static final String valTrue = "TRUE|True|true|1";
 	public static final String valFalse = "FALSE|False|false|0";
 
@@ -53,9 +51,35 @@ public class Config {
 
 	public static final String keyShowGui = "SHOW_GUI";
 
+	private static Properties configuration = initConfiguration();
+
+	private static Properties initConfiguration() {
+		Properties p = new Properties();
+		try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties")) {
+			p.load(is);
+		} catch (IOException e) {
+			throw new GameException("default configuration file couldn't be read from classpath", e);
+		}
+		String pwd = System.getProperty("user.dir");
+		File fsConfigFile = new File(pwd, "config.properties");
+		if (fsConfigFile.exists()) {
+			try (FileInputStream fis = new FileInputStream(fsConfigFile)) {
+				p = new Properties();
+				p.load(fis);
+			} catch (IOException e) {
+				System.out.println(
+						"Couldn't read config file [" + fsConfigFile.getAbsolutePath() + "]. " + e.getMessage());
+			}
+		} else {
+			System.out
+					.println("Couldn't find config file at [" + fsConfigFile.getAbsolutePath() + "]. Using defaults.");
+		}
+		return p;
+	}
+
 	/**
-	 * returns the value for the given key from the property file. If value
-	 * cannot be obtained from the property file, the reason is logged, and the
+	 * returns the value for the given key from the property file. If value cannot
+	 * be obtained from the property file, the reason is logged, and the
 	 * defaultvalue is applied.
 	 * 
 	 * @param key
@@ -64,64 +88,29 @@ public class Config {
 	 */
 	public static boolean getBooleanValue(String key, boolean defaultValue) {
 		// read configuration
-		Properties prop = new Properties();
-		InputStream input = null;
-		boolean value = defaultValue;
-		try {
-			input = getConfigFileHandle();
-			prop.load(input);
-			String svalue = prop.getProperty(key);
-			if (svalue == null) {
-			} else if (svalue.matches(valTrue)) {
-				value = true;
-			} else if (svalue.matches(valFalse)) {
-				value = false;
-			}
-		} catch (IOException ex) {
-			System.err.println("config file cannot be read. Default value '"
-					+ defaultValue + "' assumed for property '" + key + "'");
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-				}
-			}
+		String svalue = configuration.getProperty(key);
+		if (svalue == null) {
+			return defaultValue;
+		} else {
+			return svalue.matches(valTrue);
 		}
-		return value;
 	}
 
 	public static long readNumber(String key, long defaultValue) {
-		// read configuration
-		Properties prop = new Properties();
-		InputStream input = null;
 		long value = defaultValue;
 		try {
-			input = getConfigFileHandle();
-			prop.load(input);
-			String svalue = prop.getProperty(key);
+			String svalue = configuration.getProperty(key);
 			value = Long.parseLong(svalue);
-		} catch (IOException ex) {
-			System.err.println("config file cannot be read. Default value '"
-					+ defaultValue + "' assumed for property '" + key + "'");
 		} catch (NumberFormatException e) {
-			System.err.println("value for property " + key
-					+ " is not numeric. Default value '" + defaultValue
-					+ "' assumed");
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-				}
-			}
+			System.err.println(
+					"value for property " + key + " is not numeric. Default value '" + defaultValue + "' assumed");
 		}
 		return value;
 	}
 
 	/**
-	 * returns the value for the given key from the property file. If value
-	 * cannot be obtained from the property file, the reason is logged, and the
+	 * returns the value for the given key from the property file. If value cannot
+	 * be obtained from the property file, the reason is logged, and the
 	 * defaultvalue is applied.
 	 * 
 	 * @param key
@@ -129,46 +118,12 @@ public class Config {
 	 * @return
 	 */
 	public static String getStringValue(String key, String defaultValue) {
-		// read configuration
-		Properties prop = new Properties();
-		InputStream input = null;
-		String value = defaultValue;
-		try {
-			input = getConfigFileHandle();
-			prop.load(input);
-			value = prop.getProperty(key);
-		} catch (IOException ex) {
-			System.err.println("config file cannot be read. Default value '"
-					+ defaultValue + "' assumed for property '" + key + "'");
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-				}
-			}
+		String svalue = configuration.getProperty(key);
+		if (svalue == null) {
+			return defaultValue;
+		} else {
+			return svalue;
 		}
-		return value;
-	}
-
-	private static FileInputStream getConfigFileHandle()
-			throws FileNotFoundException {
-		try {
-			FileInputStream input = new FileInputStream(CONFIG_FILE_BIN);
-			return input;
-		} catch (FileNotFoundException e) {
-		}
-		try {
-			FileInputStream input = new FileInputStream(CONFIG_FILE_PRJ);
-			return input;
-		} catch (FileNotFoundException e) {
-			System.out.println("config file " + CONFIG_FILE_BIN
-					+ " cannot be read.");
-			System.out.println("config file " + CONFIG_FILE_PRJ
-					+ " cannot be read.");
-			throw e;
-		}
-
 	}
 
 }

@@ -103,7 +103,7 @@ public class SavedGame implements Serializable {
 		sb.append(save.playerToMove);
 		sb.append("\n");
 		sb.append(save.turnIndex);
-		File f = new File(toFile);
+		File f = new File(System.getProperty("user.dir") + "/save", toFile);
 		f.createNewFile();
 		PrintWriter pw = new PrintWriter(f);
 		pw.append(sb);

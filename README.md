@@ -1,33 +1,25 @@
-########## AUTHOR ###########
+# Author
 
 Fabian Braun
 21st of December 2014
 
-####### INSTALLATION ########
+# Installation
 
-To run this program a Java Runtime Environment in version 7 is required.
-Please extract the .zip-archive.
-It contains the following folder structure:
-- KnightThrough_Fabian_Braun (parent folder)
-	\- run.bat (shell script for execution on Windows OS)
-	\- randomTheLucky.jar (runnable .jar-file, no program arguments required)
-	\- save (directory for saved games, empty initially)
-	\- resources (directory for configuration file and graphics)
-		\- config.properties (configuration for the program)
-		\- icon_up.png (image representing the player playing upwards)
-		\- icon_down.png (image representing the player playing downwards)
+Note that this program has only been tested with Java 8.
+1. Download a release from [github](https://github.com/fabian-braun/KnightThroughBot/releases)
+2. extract the KnightThroughBot.zip.
+3. Start the program with one of the starter scripts in KnightThroughBot/bin
 
-## CONFIGURATION and START ##
+# Configuration
 
-To start the program run the .bat file.
 The configuration can be done over the file config.properties.
 The following values can be modified:
-	- The starting player (upwards or downwards)
-	- A file containing a saved game to be continued
-	- Whether a game should be saved after each move
-	- Whether the GUI should be shown also when to automatic bots play against each other
-	- The client/bot to be used (per player)
-	- The evaluation function to be used (per player)
-	- The total time that a player may spend during the game (per player)
+* The starting player (upwards or downwards)
+* A file containing a saved game to be continued
+* Whether a game should be saved after each move
+* Whether the GUI should be shown also when to automatic bots play against each other
+* The client/bot to be used (per player)
+* The evaluation function to be used (per player)
+* The total time that a player may spend during the game (per player)
 For more instructions see the configuration file.
 
